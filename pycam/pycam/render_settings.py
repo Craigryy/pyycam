@@ -36,6 +36,10 @@ THREADING = {
     'AUTOCOMMIT': True,  # Let Django handle transactions
 }
 
+# Enable async views
+INSTALLED_APPS += ['uvicorn']
+ASGI_APPLICATION = 'pycam.asgi.application'
+
 # Django Allauth settings
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'

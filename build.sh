@@ -6,7 +6,7 @@ set -o errexit
 pip install poetry==1.6.1
 
 # Install required additional packages for Gunicorn and production
-pip install gevent dj-database-url cloudinary django-cloudinary-storage numpy
+pip install gevent dj-database-url cloudinary django-cloudinary-storage numpy uvicorn
 
 # Install dependencies
 cd pycam
