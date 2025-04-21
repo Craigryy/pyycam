@@ -1,0 +1,727 @@
+{% extends "base.html" %}
+
+{% block title %}PyCAM - Photo Editor{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/homepage.css">
+<style>
+    /* Additional styles to ensure save button is always visible */
+    @media (max-width: 280px) {
+        .gallery-grid {
+            display: grid !important;
+            grid-template-columns: 1fr !important; /* Single column */
+            gap: 15px !important;
+            padding: 10px !important;
+        }
+
+        .canvas-controls {
+            position: fixed !important;
+            bottom: 15px !important;
+            right: 15px !important;
+            z-index: 1000 !important;
+        }
+
+        .btn-save {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+            padding: 10px 16px !important;
+            font-weight: bold !important;
+        }
+
+        /* Make gallery buttons visible on small screens */
+        .gallery-item-actions {
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+        }
+
+        .gallery-share-options {
+            display: flex !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            margin-top: 8px !important;
+        }
+
+        .btn-share, .btn-delete {
+            padding: 8px !important;
+            margin: 2px !important;
+            flex: 1 !important;
+        }
+
+        .btn-select {
+            width: 100% !important;
+        }
+    }
+
+    /* Gallery layout for small screens */
+    @media (max-width: 767px) {
+        .gallery-grid {
+            display: grid !important;
+            grid-template-columns: 1fr !important; /* Single column */
+            gap: 15px !important;
+            padding: 10px !important;
+        }
+
+        .gallery-item {
+            max-width: 100% !important;
+            margin-bottom: 20px !important;
+        }
+
+        .gallery-image-container {
+            height: auto !important;
+            max-height: 250px !important;
+        }
+
+        .gallery-image-container img {
+            max-height: 250px !important;
+            width: auto !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+            display: block !important;
+        }
+
+        .gallery-item-actions {
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+            padding: 10px 5px !important;
+        }
+
+        .gallery-share-options {
+            display: flex !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            margin-top: 10px !important;
+        }
+
+        .btn-select {
+            width: 100% !important;
+            padding: 8px !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pycam-container">
+    <!-- Header bar -->
+    <div class="pycam-header">
+        <div class="pycam-logo">
+            <h1>PyCAM</h1>
+        </div>
+        <div class="pycam-tabs">
+            <a href="#" class="tab active">
+                <i class="fas fa-edit"></i> Editor
+            </a>
+            <a href="#" class="tab">
+                <i class="fas fa-images"></i> Gallery
+            </a>
+        </div>
+        <div class="user-profile">
+            <span>Hello, {{ user.username }}</span>
+            {% with social_account=user.socialaccount_set.first %}
+                {% if social_account %}
+                    {% if social_account.provider == 'facebook' %}
+                        <!-- Direct Facebook API access -->
+                        <img src="https://graph.facebook.com/{{ social_account.uid }}/picture?width=100&height=100" alt="{{ user.username }}" class="avatar">
+                    {% elif social_account.provider == 'google' %}
+                        <!-- Google profile image handling -->
+                        <img src="{{ social_account.extra_data.picture }}" alt="{{ user.username }}" class="avatar">
+                    {% elif social_account.provider == 'github' %}
+                        <!-- GitHub avatar handling -->
+                        <img src="{{ social_account.extra_data.avatar_url }}" alt="{{ user.username }}" class="avatar">
+                    {% else %}
+                        <!-- Fallback for other providers -->
+                        <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=random" alt="{{ user.username }}" class="avatar">
+                    {% endif %}
+                {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=random" alt="{{ user.username }}" class="avatar">
+                {% endif %}
+            {% endwith %}
+            <a href="{% url 'account_logout' %}" class="logout-btn" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+
+        <!-- Debug section (only shown in development) -->
+        {% if debug %}
+        <div style="display: none;">
+            <h4>Debug Social Account Info:</h4>
+            {% for account in user.socialaccount_set.all %}
+                <div>
+                    <p>Provider: {{ account.provider }}</p>
+                    <p>UID: {{ account.uid }}</p>
+                    <p>Last Login: {{ account.last_login }}</p>
+                    <p>Date Joined: {{ account.date_joined }}</p>
+                    <p>Extra Data: {{ account.extra_data }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Main content area -->
+    <div class="pycam-content">
+        <!-- Sidebar -->
+        <div class="pycam-sidebar">
+            <!-- Upload Section -->
+            <div class="sidebar-section">
+                <h3>Upload</h3>
+                <div class="upload-box" id="upload-box">
+                    <form id="upload-form" method="post" enctype="multipart/form-data" action="{% url 'save_image' %}">
+                        {% csrf_token %}
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Upload Image</span>
+                            <input type="file" name="original_image" id="image-upload" accept="image/*" style="display: none;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Effects Section -->
+            <div class="sidebar-section">
+                <h3>Effects</h3>
+                <div class="effects-grid">
+                    <div class="effect-item" data-effect="original">
+                        <div class="effect-icon">
+                            <i class="fas fa-undo"></i>
+                        </div>
+                        <span>Original</span>
+                    </div>
+                    <div class="effect-item" data-effect="brightness">
+                        <div class="effect-icon">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <span>Brightness</span>
+                    </div>
+                    <div class="effect-item" data-effect="contrast">
+                        <div class="effect-icon">
+                            <i class="fas fa-adjust"></i>
+                        </div>
+                        <span>Contrast</span>
+                    </div>
+                    <div class="effect-item" data-effect="grayscale">
+                        <div class="effect-icon">
+                            <i class="fas fa-circle-half-stroke"></i>
+                        </div>
+                        <span>Grayscale</span>
+                    </div>
+                    <div class="effect-item" data-effect="sepia">
+                        <div class="effect-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <span>Sepia</span>
+                    </div>
+                    <div class="effect-item" data-effect="blur">
+                        <div class="effect-icon">
+                            <i class="fas fa-water"></i>
+                        </div>
+                        <span>Blur</span>
+                    </div>
+                    <div class="effect-item" data-effect="invert">
+                        <div class="effect-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <span>Invert</span>
+                    </div>
+                    <div class="effect-item" data-effect="saturate">
+                        <div class="effect-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <span>Saturate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas Area -->
+        <div class="pycam-canvas">
+            <div class="canvas-placeholder" id="canvas-placeholder">
+                <div class="placeholder-content">
+                    <i class="fas fa-camera"></i>
+                    <h2>Ready to edit</h2>
+                    <p>Upload an image or select from your gallery</p>
+                </div>
+            </div>
+            <div class="canvas-wrapper" id="canvas-wrapper" style="display: none;">
+                <img id="preview-image" src="" alt="Preview">
+            </div>
+            <div class="canvas-controls">
+                <button id="save-button" class="btn-save" disabled>
+                    <i class="fas fa-save"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gallery Modal -->
+<div class="gallery-modal" id="gallery-modal">
+    <div class="gallery-modal-content">
+        <div class="gallery-modal-header">
+            <h2>Your Gallery</h2>
+            <button class="close-gallery">&times;</button>
+        </div>
+        <div class="gallery-grid">
+            {% if images %}
+                {% for image in images %}
+                <div class="gallery-item">
+                    <div class="gallery-image-container">
+                        <img src="{{ image.edited_image.url }}" alt="Edited image">
+                        {% if image.effect_applied %}
+                        <div class="effect-badge">{{ image.effect_applied }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="gallery-item-actions">
+                        <button class="btn-select" data-src="{{ image.edited_image.url }}">
+                            <i class="fas fa-pencil-alt"></i> Edit
+                        </button>
+                        <div class="gallery-share-options">
+                            <a href="#" class="btn-share btn-download" title="Download"
+                               data-url="{{ image.edited_image.url }}" download>
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                               target="_blank" class="btn-share btn-facebook" title="Share to Facebook"
+                               data-url="{{ image.edited_image.url }}">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.instagram.com/"
+                               target="_blank" class="btn-share btn-instagram" title="Share to Instagram"
+                               data-url="{{ image.edited_image.url }}">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <button class="btn-delete" data-id="{{ image.id }}" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="gallery-empty">
+                    <p>Your gallery is empty. Save some edited images to see them here.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Upload functionality
+        const uploadBox = document.getElementById('upload-box');
+        const fileInput = document.getElementById('image-upload');
+        const previewImage = document.getElementById('preview-image');
+        const canvasPlaceholder = document.getElementById('canvas-placeholder');
+        const canvasWrapper = document.getElementById('canvas-wrapper');
+        const saveButton = document.getElementById('save-button');
+        let currentEffect = 'original';
+        // Track original and filtered image data
+        let originalImageData = null;
+        let filteredImageData = null;
+        // Create a toast container if it doesn't exist
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            document.body.appendChild(toastContainer);
+        }
+
+        // Handle file selection
+        uploadBox.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    // Store the original image data
+                    originalImageData = e.target.result;
+                    // Initially, filtered is the same as original
+                    filteredImageData = originalImageData;
+
+                    // Display image
+                    previewImage.src = originalImageData;
+                    canvasPlaceholder.style.display = 'none';
+                    canvasWrapper.style.display = 'block';
+                    saveButton.disabled = false;
+
+                    // Apply original effect (no effect)
+                    currentEffect = 'original';
+                    previewImage.style.filter = 'none';
+                    // Reset active state on effect buttons
+                    document.querySelectorAll('.effect-item').forEach(el => el.classList.remove('active'));
+                    document.querySelector('[data-effect="original"]').classList.add('active');
+                }
+
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        // Handle effects
+        const effectItems = document.querySelectorAll('.effect-item');
+
+        effectItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (previewImage.src) {
+                    const effect = this.getAttribute('data-effect');
+
+                    // If going back to original, reset to original image
+                    if (effect === 'original' && originalImageData) {
+                        previewImage.src = originalImageData;
+                        filteredImageData = originalImageData;
+                        previewImage.style.filter = 'none';
+                        currentEffect = 'original';
+                    } else {
+                        // Apply the effect (will update filteredImageData)
+                        applyEffect(effect);
+                    }
+
+                    // Update active state
+                    effectItems.forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        function applyEffect(effect) {
+            // Only proceed if an image is loaded
+            if (!previewImage.src) {
+                return;
+            }
+
+            currentEffect = effect;
+
+            // Show loading indicator
+            previewImage.classList.add('opacity-50');
+
+            // Use original image data for applying effects
+            const imageToProcess = originalImageData || previewImage.src;
+
+            // If it's "original" effect, just use the original image
+            if (effect === 'original') {
+                previewImage.src = imageToProcess;
+                filteredImageData = imageToProcess;
+                previewImage.style.filter = 'none';
+                previewImage.classList.remove('opacity-50');
+                return;
+            }
+
+            // Apply CSS filter immediately as fallback while we wait for the server
+            applyEffectFallback(effect);
+
+            // Create form data for API call
+            const formData = new FormData();
+            formData.append('effect', effect);
+            formData.append('image', imageToProcess);
+
+            // Make API call to apply effect
+            fetch('{% url "apply_effect" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Remove loading indicator
+                previewImage.classList.remove('opacity-50');
+
+                if (data.status === 'success') {
+                    // Store and display the filtered image
+                    filteredImageData = data.image;
+                    previewImage.src = data.image;
+                    previewImage.style.filter = 'none'; // Clear any CSS filters
+                    console.log("Effect applied:", effect);
+                } else {
+                    console.error('Error applying effect:', data.message);
+                    // Fallback already applied
+                }
+            })
+            .catch(error => {
+                console.error('Error applying effect:', error);
+                previewImage.classList.remove('opacity-50');
+                // Fallback already applied
+            });
+        }
+
+        // Fallback function using CSS filters
+        function applyEffectFallback(effect) {
+            let filterStyle = '';
+
+            switch(effect) {
+                case 'brightness':
+                    filterStyle = 'brightness(1.3)';
+                    break;
+                case 'contrast':
+                    filterStyle = 'contrast(1.5)';
+                    break;
+                case 'grayscale':
+                    filterStyle = 'grayscale(1)';
+                    break;
+                case 'sepia':
+                    filterStyle = 'sepia(0.8)';
+                    break;
+                case 'blur':
+                    filterStyle = 'blur(3px)';
+                    break;
+                case 'invert':
+                    filterStyle = 'invert(1)';
+                    break;
+                case 'saturate':
+                    filterStyle = 'saturate(2)';
+                    break;
+                default:
+                    filterStyle = 'none';
+            }
+
+            previewImage.style.filter = filterStyle;
+        }
+
+        // Show toast message utility function
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">${message}</div>
+            `;
+            toastContainer.appendChild(toast);
+
+            // Auto-hide the toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        // Save button functionality
+        saveButton.addEventListener('click', function() {
+            // Always use the filtered image data for saving
+            if (!filteredImageData) {
+                showToast("No image to save. Please upload or select an image first.", "error");
+                return;
+            }
+
+            // For CSS filter-only effects, we need to capture the canvas content with filters applied
+            if (previewImage.style.filter && previewImage.style.filter !== 'none') {
+                try {
+                    // Create a canvas to draw the filtered image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Set canvas dimensions to match the image
+                    canvas.width = previewImage.naturalWidth;
+                    canvas.height = previewImage.naturalHeight;
+
+                    // Apply the filter to the context if possible (not all browsers support this)
+                    if (ctx.filter !== undefined) {
+                        ctx.filter = previewImage.style.filter;
+                    }
+
+                    // Draw the image with the filter applied
+                    ctx.drawImage(previewImage, 0, 0, canvas.width, canvas.height);
+
+                    // Get the canvas data as a base64 string
+                    filteredImageData = canvas.toDataURL('image/jpeg', 0.95);
+                    console.log("Captured filtered image from canvas");
+                } catch (err) {
+                    console.error("Error capturing filtered image from canvas:", err);
+                    // Continue with the current filteredImageData as fallback
+                }
+            }
+
+            // If using file input directly without applying effects in browser
+            if (fileInput.files.length > 0 && currentEffect === 'original') {
+                // Add effect to form and submit directly
+                const effectInput = document.createElement('input');
+                effectInput.type = 'hidden';
+                effectInput.name = 'effect_applied';
+                effectInput.value = currentEffect;
+                document.getElementById('upload-form').appendChild(effectInput);
+                document.getElementById('upload-form').submit();
+                return;
+            }
+
+            // Create form data for AJAX saving
+            const formData = new FormData();
+            formData.append('effect_applied', currentEffect);
+
+            // Send the filtered image - this is key!
+            formData.append('image', filteredImageData);
+
+            console.log("Saving image with effect:", currentEffect);
+
+            // Show saving indicator
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            fetch('{% url "save_image" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Reset button
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save"></i> Save';
+
+                if (data.success) {
+                    showToast("Image saved successfully!");
+
+                    // Reload to show the saved image in gallery
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    console.error('Error saving image:', data.error);
+                    showToast('Error saving image: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                // Reset button
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save"></i> Save';
+
+                console.error('Error:', error);
+                showToast('Error saving image. Please try again.', 'error');
+            });
+        });
+
+        // Gallery tab functionality
+        const galleryTab = document.querySelector('.tab:not(.active)');
+        const galleryModal = document.getElementById('gallery-modal');
+        const closeGallery = document.querySelector('.close-gallery');
+
+        if (galleryTab) {
+            galleryTab.addEventListener('click', function(e) {
+                e.preventDefault();
+                galleryModal.style.display = 'block';
+            });
+        }
+
+        if (closeGallery) {
+            closeGallery.addEventListener('click', function() {
+                galleryModal.style.display = 'none';
+            });
+        }
+
+        // Select image from gallery
+        const selectButtons = document.querySelectorAll('.btn-select');
+
+        selectButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const src = this.getAttribute('data-src');
+                previewImage.src = src;
+                canvasPlaceholder.style.display = 'none';
+                canvasWrapper.style.display = 'block';
+                saveButton.disabled = false;
+                galleryModal.style.display = 'none';
+
+                // Reset to original effect
+                applyEffect('original');
+                effectItems.forEach(el => el.classList.remove('active'));
+                document.querySelector('[data-effect="original"]').classList.add('active');
+                currentEffect = 'original';
+            });
+        });
+
+        // Delete image from gallery
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete this image?')) {
+                    const imageId = this.getAttribute('data-id');
+
+                    fetch(`{% url 'delete_image' 0 %}`.replace('0', imageId), {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            this.closest('.gallery-item').remove();
+                            showToast('Image deleted successfully!');
+                        } else {
+                            showToast('Error deleting image: ' + data.error, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('Error deleting image. Please try again.', 'error');
+                    });
+                }
+            });
+        });
+
+        // Social sharing functionality
+        const facebookButtons = document.querySelectorAll('.btn-facebook');
+        facebookButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const baseUrl = window.location.origin;
+                const imageUrl = this.getAttribute('data-url');
+                const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(baseUrl + imageUrl)}`;
+                window.open(shareUrl, 'facebook-share', 'width=580,height=520');
+                return false;
+            });
+        });
+
+        // Instagram sharing note
+        const instagramButtons = document.querySelectorAll('.btn-instagram');
+        instagramButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Direct Instagram sharing isn't available via web API
+                // We'll show a popup with instructions
+                alert('To share on Instagram: \n1. Download this image \n2. Open Instagram app \n3. Create a new post with the downloaded image');
+
+                // Optionally open Instagram
+                window.open('https://www.instagram.com/', '_blank');
+            });
+        });
+
+        // Download functionality
+        const downloadButtons = document.querySelectorAll('.btn-download');
+        downloadButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const imageUrl = this.getAttribute('data-url');
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.download = 'pycam-edited-image-' + new Date().getTime() + '.jpg';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        });
+    });
+</script>
+{% endblock %}

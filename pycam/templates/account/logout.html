@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Log Out | PyCAM{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Log Out</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-center mb-4">Are you sure you want to log out?</p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">Yes, Log Out</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="/" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

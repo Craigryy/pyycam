@@ -1,0 +1,739 @@
+/* Main container */
+.pycam-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f8f9fa;
+}
+
+/* Header styling */
+.pycam-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.pycam-logo h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.pycam-tabs {
+    display: flex;
+    margin-left: 30px;
+}
+
+.tab {
+    padding: 8px 15px;
+    margin-right: 10px;
+    text-decoration: none;
+    color: #555;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.tab i {
+    margin-right: 5px;
+}
+
+.tab.active {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.tab:hover:not(.active) {
+    background-color: #f8f8f8;
+}
+
+.user-profile {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+.user-profile span {
+    margin-right: 10px;
+    color: #555;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.logout-btn {
+    color: #555;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.logout-btn:hover {
+    color: #dc3545;
+}
+
+/* Main content area */
+.pycam-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Sidebar */
+.pycam-sidebar {
+    width: 300px;
+    background-color: #fff;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.sidebar-section {
+    margin-bottom: 25px;
+}
+
+.sidebar-section h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+/* Upload box */
+.upload-box {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.upload-box:hover {
+    border-color: #aaa;
+    background-color: #f9f9f9;
+}
+
+.upload-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-icon i {
+    font-size: 24px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.upload-icon span {
+    color: #555;
+}
+
+/* Effects grid */
+.effects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.effect-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.effect-item:hover {
+    background-color: #f0f0f0;
+}
+
+.effect-item.active {
+    background-color: #e3f2fd;
+}
+
+.effect-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.effect-item i {
+    font-size: 18px;
+    color: #666;
+}
+
+.effect-item span {
+    font-size: 13px;
+    color: #555;
+}
+
+/* Canvas area */
+.pycam-canvas {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    position: relative;
+}
+
+.canvas-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.placeholder-content {
+    text-align: center;
+}
+
+.placeholder-content i {
+    font-size: 50px;
+    color: #bbb;
+    margin-bottom: 15px;
+}
+
+.placeholder-content h2 {
+    font-size: 24px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.placeholder-content p {
+    color: #888;
+}
+
+.canvas-wrapper {
+    max-width: 90%;
+    max-height: 80%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#preview-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.canvas-controls {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+/* Save button */
+.btn-save {
+    padding: 8px 16px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.btn-save i {
+    margin-right: 5px;
+}
+
+.btn-save:hover {
+    background-color: #3367d6;
+}
+
+.btn-save:disabled {
+    background-color: #b0c8f0;
+    cursor: not-allowed;
+}
+
+/* Gallery modal */
+.gallery-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.gallery-modal-content {
+    background-color: white;
+    margin: 50px auto;
+    max-width: 900px;
+    width: 90%;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.gallery-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.gallery-modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.close-gallery {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #777;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.gallery-item {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.gallery-image-container {
+    position: relative;
+    height: 200px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.effect-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.gallery-item-actions {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-select {
+    padding: 8px 12px;
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    width: 100%;
+}
+
+.btn-select i {
+    margin-right: 5px;
+}
+
+.btn-select:hover {
+    background-color: #3367d6;
+}
+
+.gallery-share-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-share, .btn-delete {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-facebook {
+    background-color: #1877f2;
+}
+
+.btn-facebook:hover {
+    background-color: #166fe5;
+}
+
+.btn-instagram {
+    background-color: #e1306c;
+}
+
+.btn-instagram:hover {
+    background-color: #d62e68;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+.gallery-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #777;
+}
+
+.btn-download {
+    background-color: #34a853;
+}
+
+.btn-download:hover {
+    background-color: #2e8f49;
+}
+
+/* Media queries for responsive design */
+
+/* Extra small devices (phones, 320px and up) - Galaxy Fold 3 */
+@media (max-width: 359px) {
+    .pycam-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .pycam-logo h1 {
+        font-size: 20px;
+    }
+
+    .pycam-tabs {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .tab {
+        padding: 6px 10px;
+        font-size: 12px;
+        margin-right: 5px;
+    }
+
+    .user-profile {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 10px;
+        justify-content: space-between;
+    }
+
+    .user-profile span {
+        font-size: 12px;
+    }
+
+    .pycam-content {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .pycam-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        order: 2;
+    }
+
+    .pycam-canvas {
+        order: 1;
+        min-height: 350px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+    }
+
+    .effect-item {
+        padding: 5px;
+    }
+
+    .effect-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .effect-item i {
+        font-size: 14px;
+    }
+
+    .effect-item span {
+        font-size: 10px;
+    }
+
+    .canvas-controls {
+        position: fixed;
+        bottom: 15px;
+        right: 15px;
+        z-index: 900;
+    }
+
+    .btn-save {
+        padding: 8px 15px;
+        font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .gallery-modal-content {
+        width: 95%;
+        margin: 10px auto;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .gallery-image-container {
+        height: 120px;
+    }
+
+    .gallery-item-actions {
+        padding: 5px;
+        gap: 5px;
+    }
+
+    .btn-select {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+
+    .gallery-share-options {
+        justify-content: space-around;
+    }
+
+    .btn-share, .btn-delete {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}
+
+/* Small devices (phones, 360px to 575px) */
+@media (min-width: 360px) and (max-width: 575px) {
+    .pycam-header {
+        padding: 10px;
+    }
+
+    .pycam-logo h1 {
+        font-size: 20px;
+    }
+
+    .pycam-tabs {
+        margin-left: 15px;
+    }
+
+    .tab {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .user-profile span {
+        display: none;
+    }
+
+    .pycam-content {
+        flex-direction: column;
+    }
+
+    .pycam-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        order: 2;
+    }
+
+    .pycam-canvas {
+        order: 1;
+        min-height: 300px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .canvas-controls {
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+
+    .gallery-image-container {
+        height: 140px;
+    }
+}
+
+/* Medium devices (tablets, 576px to 767px) */
+@media (min-width: 576px) and (max-width: 767px) {
+    .pycam-content {
+        flex-direction: column;
+    }
+
+    .pycam-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        order: 2;
+    }
+
+    .pycam-canvas {
+        order: 1;
+        min-height: 400px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+/* Large devices (desktops, 768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .pycam-sidebar {
+        width: 250px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+}
+
+/* Fix for Galaxy Fold and other ultra-small devices in folded state */
+@media (max-width: 280px) {
+    .pycam-header {
+        flex-direction: column;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .pycam-tabs {
+        margin-left: 0;
+        margin-top: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .tab {
+        padding: 4px 8px;
+        font-size: 11px;
+        margin: 2px;
+    }
+
+    .user-profile {
+        margin-left: 0;
+        margin-top: 5px;
+        justify-content: center;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .effect-item span {
+        font-size: 9px;
+    }
+
+    .canvas-controls {
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .btn-save {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        padding: 5px;
+    }
+
+    .gallery-modal-content {
+        margin: 5px;
+        width: 95%;
+    }
+
+    .gallery-modal-header h2 {
+        font-size: 16px;
+    }
+}

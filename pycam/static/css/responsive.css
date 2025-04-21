@@ -1,0 +1,656 @@
+/*
+  PyCAM - Responsive Styles
+  Media queries for responsive design
+*/
+
+/* Ultra small devices (foldable phones like Galaxy Fold) */
+@media (max-width: 280px) {
+    .pycam-container {
+        height: auto;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .pycam-header {
+        flex-direction: column;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .pycam-logo h1 {
+        font-size: 16px;
+    }
+
+    .pycam-tabs {
+        margin-left: 0;
+        margin-top: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .tab {
+        padding: 3px 6px;
+        font-size: 10px;
+        margin: 2px;
+    }
+
+    .user-profile {
+        margin-left: 0;
+        margin-top: 5px;
+        justify-content: center;
+    }
+
+    .user-profile span {
+        display: none;
+    }
+
+    .avatar {
+        width: 22px;
+        height: 22px;
+    }
+
+    .pycam-content {
+        flex-direction: column;
+    }
+
+    .pycam-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 8px;
+        order: 2;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .sidebar-section h3 {
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    .upload-box {
+        padding: 8px;
+    }
+
+    .upload-icon i {
+        font-size: 16px;
+    }
+
+    .upload-icon span {
+        font-size: 11px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 3px;
+    }
+
+    .effect-item {
+        padding: 3px;
+    }
+
+    .effect-icon {
+        width: 26px;
+        height: 26px;
+    }
+
+    .effect-item i {
+        font-size: 13px;
+    }
+
+    .effect-item span {
+        font-size: 8px;
+    }
+
+    .pycam-canvas {
+        order: 1;
+        min-height: 200px;
+        padding: 6px;
+        margin-bottom: 60px; /* Make space for fixed buttons */
+    }
+
+    .canvas-controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(33, 33, 33, 0.95);
+        padding: 6px 4px;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        gap: 5px;
+    }
+
+    .btn-save {
+        position: fixed;
+        bottom: 70px;
+        right: 10px;
+        z-index: 1001;
+        padding: 8px 12px;
+        font-weight: bold;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        background-color: #4CAF50;
+        color: white;
+        font-size: 13px;
+        border-radius: 50px;
+        width: auto;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .effects-panel {
+        max-height: 120px;
+        overflow-y: auto;
+        padding: 4px;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        max-width: 220px;
+        font-size: 12px;
+        padding: 4px;
+    }
+
+    #image-preview-container {
+        max-width: 100%;
+        height: auto;
+        max-height: 180px;
+        overflow: hidden;
+    }
+
+    #image-preview {
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .properties-panel {
+        max-height: 150px;
+        overflow-y: auto;
+        padding: 4px;
+        font-size: 12px;
+    }
+
+    .properties-panel label {
+        margin-bottom: 3px;
+        font-size: 11px;
+    }
+
+    .properties-panel input[type="range"] {
+        width: 100%;
+        margin: 3px 0;
+    }
+
+    /* Make sure buttons are big enough for touch */
+    .btn {
+        min-height: 30px;
+        min-width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3px 6px;
+        font-size: 11px;
+    }
+
+    /* Make sure file input is usable */
+    input[type="file"] {
+        font-size: 10px;
+        padding: 3px;
+    }
+
+    /* Fix for scrolling issues */
+    body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+
+    /* Ensure modal is usable on tiny screens */
+    .modal-dialog {
+        margin: 5px;
+        max-width: calc(100vw - 10px);
+    }
+
+    .modal-content {
+        padding: 5px;
+    }
+
+    .modal-header {
+        padding: 5px;
+    }
+
+    .modal-body {
+        padding: 5px;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .modal-footer {
+        padding: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    /* Fix for gallery view */
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 4px;
+    }
+
+    .gallery-image-container {
+        height: 90px;
+    }
+
+    .placeholder-content i {
+        font-size: 30px;
+    }
+
+    .placeholder-content h2 {
+        font-size: 16px;
+    }
+
+    .placeholder-content p {
+        font-size: 12px;
+    }
+
+    .gallery-modal-content {
+        margin: 5px;
+        width: 95%;
+    }
+
+    .gallery-modal-header h2 {
+        font-size: 16px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 5px;
+    }
+
+    .gallery-image-container {
+        height: 100px;
+    }
+
+    .btn-select {
+        padding: 5px;
+        font-size: 11px;
+    }
+
+    .btn-share, .btn-delete {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+    }
+
+    .main-content {
+        padding-bottom: 80px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    p, label {
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small devices - phones (Galaxy Fold unfolded, small iPhones) */
+@media (min-width: 281px) and (max-width: 359px) {
+    .pycam-container {
+        height: auto;
+    }
+
+    .pycam-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px;
+    }
+
+    .pycam-logo h1 {
+        font-size: 20px;
+    }
+
+    .pycam-tabs {
+        margin-left: 0;
+        margin-top: 8px;
+    }
+
+    .tab {
+        padding: 5px 10px;
+        font-size: 12px;
+        margin-right: 5px;
+    }
+
+    .user-profile {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 8px;
+        justify-content: space-between;
+    }
+
+    .user-profile span {
+        font-size: 11px;
+    }
+
+    .pycam-content {
+        flex-direction: column;
+    }
+
+    .pycam-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 10px;
+        order: 2;
+    }
+
+    .pycam-canvas {
+        order: 1;
+        min-height: 300px;
+        padding: 10px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
+    }
+
+    .effect-item {
+        padding: 5px;
+    }
+
+    .effect-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .effect-item i {
+        font-size: 14px;
+    }
+
+    .effect-item span {
+        font-size: 10px;
+    }
+
+    .canvas-controls {
+        position: fixed;
+        bottom: 15px;
+        right: 15px;
+        z-index: 900;
+    }
+
+    .btn-save {
+        padding: 8px 15px;
+        font-size: 14px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .gallery-modal-content {
+        width: 95%;
+        margin: 10px auto;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .gallery-image-container {
+        height: 120px;
+    }
+
+    .btn-select {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .btn-share, .btn-delete {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}
+
+/* Small devices (landscape phones, 360px to 576px) */
+@media (min-width: 360px) and (max-width: 576px) {
+    .container {
+        padding: 0 10px;
+    }
+
+    .pycam-header {
+        padding: 10px;
+    }
+
+    .pycam-logo h1 {
+        font-size: 20px;
+    }
+
+    .pycam-tabs {
+        margin-left: 10px;
+    }
+
+    .tab {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    .user-profile span {
+        display: none;
+    }
+
+    .pycam-content {
+        flex-direction: column;
+    }
+
+    .pycam-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        order: 2;
+    }
+
+    .pycam-canvas {
+        order: 1;
+        min-height: 300px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .canvas-controls {
+        position: fixed;
+        bottom: 15px;
+        right: 15px;
+        z-index: 900;
+    }
+
+    .btn-save {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 10px;
+    }
+
+    .gallery-image-container {
+        height: 140px;
+    }
+
+    .image-preview {
+        max-height: 300px;
+    }
+
+    .effect-btn {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+    }
+
+    .card-img-top {
+        height: 150px;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .navbar .container {
+        padding: 0 8px;
+    }
+}
+
+/* Medium devices (tablets, 576px to 768px) */
+@media (min-width: 576px) and (max-width: 768px) {
+    .pycam-content {
+        flex-direction: column;
+    }
+
+    .pycam-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        order: 2;
+    }
+
+    .pycam-canvas {
+        order: 1;
+        min-height: 400px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .effect-btn {
+        padding: 6px 12px;
+    }
+
+    .card-img-top {
+        height: 180px;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+    }
+
+    .effects-panel {
+        flex-direction: column;
+        max-height: none;
+    }
+
+    .canvas-container {
+        padding: 10px;
+    }
+
+    .properties-panel {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+}
+
+/* Large devices (desktops, 768px to 992px) */
+@media (min-width: 768px) and (max-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+
+    .pycam-sidebar {
+        width: 250px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .card-img-top {
+        height: 180px;
+    }
+}
+
+/* Extra large devices (large desktops, 992px and up) */
+@media (min-width: 992px) {
+    .container {
+        max-width: 1140px;
+    }
+
+    .effects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Fix for all mobile devices - ensure save button is always visible */
+@media (max-width: 992px) {
+    .canvas-controls {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 900;
+    }
+
+    .btn-save {
+        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        padding: 10px 20px;
+    }
+
+    /* Make sure the gallery modal is usable on mobile */
+    .gallery-modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* Fix for modal on small screens */
+    .gallery-modal {
+        padding: 0;
+    }
+}
+
+/* Small phone styles */
+@media (max-width: 480px) {
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+    }
+
+    .gallery-item {
+        height: 120px;
+    }
+
+    .canvas-container {
+        padding: 5px;
+    }
+
+    .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .canvas-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .upload-section form {
+        flex-direction: column;
+    }
+}
