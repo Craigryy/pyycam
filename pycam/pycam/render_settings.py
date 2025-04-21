@@ -6,20 +6,10 @@ import dj_database_url
 from .settings import *  # Import base settings
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # Temporarily set to True for troubleshooting
+DEBUG = True  # Keep debug on until we resolve issues
 
-# Allow only Render domains and your custom domain
-ALLOWED_HOSTS = [
-    '.onrender.com',  # Allow all Render subdomains
-    'pycam.onrender.com',  # Explicit domain
-    'www.pycam.onrender.com',  # www subdomain
-    'localhost',      # For local testing
-    '127.0.0.1',      # For local testing
-]
-
-# Add any custom domains here if you have them
-if os.environ.get('CUSTOM_DOMAIN'):
-    ALLOWED_HOSTS.append(os.environ.get('CUSTOM_DOMAIN'))
+# Allow all hosts temporarily for troubleshooting
+ALLOWED_HOSTS = ['*']
 
 # Configure the database using Render's DATABASE_URL environment variable
 database_url = os.environ.get('DATABASE_URL')
@@ -36,32 +26,47 @@ else:
         }
     }
 
-# CSRF settings for Render
+# CSRF settings for Render - accept all origins temporarily
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
+    'http://*.onrender.com',
+    'https://pycam.onrender.com',
+    'http://pycam.onrender.com',
 ]
-if os.environ.get('CUSTOM_DOMAIN'):
-    CSRF_TRUSTED_ORIGINS.append(f"https://{os.environ.get('CUSTOM_DOMAIN')}")
 
-# Security settings
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# Temporarily disable security settings during troubleshooting
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
 
-# Static and media files settings
-# Use cloudinary for storing static and media files
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+# Static files settings
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Configure Cloudinary if credentials are available
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
-}
+# Media files settings
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Only use Cloudinary if credentials are available
+if os.environ.get('CLOUDINARY_CLOUD_NAME') and os.environ.get('CLOUDINARY_API_KEY') and os.environ.get('CLOUDINARY_API_SECRET'):
+    # Use cloudinary for storing static and media files
+    INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+
+    # Configure Cloudinary
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+        'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+        'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
+    }
+else:
+    # If no Cloudinary credentials, use standard file storage
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 # Logging configuration
 LOGGING = {
@@ -69,7 +74,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
             'style': '{',
         },
     },
@@ -81,12 +86,12 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
+        'level': 'DEBUG',  # Set to DEBUG to see all logs
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'level': 'DEBUG',
             'propagate': False,
         },
     },

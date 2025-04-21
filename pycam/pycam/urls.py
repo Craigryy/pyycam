@@ -26,6 +26,9 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
 ]
 
-# Add media files handling in development
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Add media files handling in all environments
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Add static files handling in all environments
+# This is not recommended for production, but we're troubleshooting
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
