@@ -16,7 +16,7 @@ database_url = os.environ.get('DATABASE_URL')
 if database_url:
     # Use PostgreSQL on Render
     DATABASES = {
-        'default': dj_database_url.parse(database_url, conn_max_age=None)  # Keep connections open forever
+        'default': dj_database_url.parse(database_url, conn_max_age=300)  # 5 minutes connection lifetime
     }
 else:
     # Use SQLite for local development
@@ -31,8 +31,9 @@ else:
 for db_name in DATABASES:
     DATABASES[db_name]['ATOMIC_REQUESTS'] = True
 
-    # Never automatically close connections
-    DATABASES[db_name]['CONN_MAX_AGE'] = None  # Keep connections open indefinitely
+    # Reasonable connection lifetime
+    if 'CONN_MAX_AGE' not in DATABASES[db_name]:
+        DATABASES[db_name]['CONN_MAX_AGE'] = 300  # 5 minutes connection lifetime
 
 # Important Django threading settings
 THREADING = {
