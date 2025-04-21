@@ -19,21 +19,21 @@ if database_url:
         'default': dj_database_url.parse(database_url, conn_max_age=300)  # 5 minutes connection lifetime
     }
 else:
-    # Use SQLite for local development
+    # Use SQLite for local development with proper options
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'OPTIONS': {
+                'timeout': 30,  # Wait longer for locks
+            }
         }
     }
 
 # Database connection settings
 for db_name in DATABASES:
     DATABASES[db_name]['ATOMIC_REQUESTS'] = True
-
-    # Reasonable connection lifetime
-    if 'CONN_MAX_AGE' not in DATABASES[db_name]:
-        DATABASES[db_name]['CONN_MAX_AGE'] = 300  # 5 minutes connection lifetime
+    DATABASES[db_name]['CONN_MAX_AGE'] = 60  # 1 minute max connection age
 
 # Important Django threading settings
 THREADING = {
@@ -77,8 +77,11 @@ CSRF_TRUSTED_ORIGINS = [
     'http://pyycam.onrender.com',
 ]
 
-# Temporarily disable security settings during troubleshooting
-SECURE_SSL_REDIRECT = False
+# Force HTTPS in production
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+
+# Temporarily relax some security settings
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 SECURE_HSTS_SECONDS = 0
@@ -92,6 +95,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Media files settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Django AllAuth Settings
+SITE_ID = 1
+SITE_DOMAIN = 'pyycam.onrender.com'
+SITE_NAME = 'PyyCam'
+
+# Enable social accounts
+SOCIALACCOUNT_ENABLED = True
 
 # Only use Cloudinary if credentials are available
 if os.environ.get('CLOUDINARY_CLOUD_NAME') and os.environ.get('CLOUDINARY_API_KEY') and os.environ.get('CLOUDINARY_API_SECRET'):
@@ -148,13 +159,6 @@ LOGGING = {
 # Session configuration
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use database-backed sessions
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
-SESSION_COOKIE_SECURE = False  # For debugging, should be True in actual prod
-
-
-
-
-
-
 
 # Social account provider settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -238,6 +242,3 @@ SOCIALACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 # ACCOUNT_AUTHENTICATION_METHOD is deprecated, replaced by:
 # ACCOUNT_LOGIN_METHODS = {'username', 'email'} (already defined above)
-
-# Enable social accounts
-SOCIALACCOUNT_ENABLED = True
