@@ -35,8 +35,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-produc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'localhost:8001', '127.0.0.1','*']
+ALLOWED_HOSTS = ['localhost', 'localhost:8001', 'localhost:8090', '127.0.0.1','*']
 
+# CSRF settings
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8090', 'http://127.0.0.1:8090', 'http://localhost:8080', 'http://pycam.docker.localhost']
 
 # Application definition
 
@@ -206,8 +208,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v13.0',
         'APP': {
-            'client_id': '611840314516615',
-            'secret': 'a4218fbbf3cd04d7d30f2e50d12e2037',
+            'client_id': os.environ.get('FACEBOOK_CLIENT_ID', ''),
+            'secret': os.environ.get('FACEBOOK_SECRET_KEY', ''),
             'key': '',
         },
     },
@@ -216,22 +218,22 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': '855966894412-jdv0939lv8h7s04oh73ncf4epp1u4ovi.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
+            'secret': os.environ.get('GOOGLE_SECRET_KEY', ''),
             'key': '',
         },
     },
     'github': {
         'APP': {
-            'client_id': 'Iv23liy2fTBsqUcvrb8S',
-            'secret': 'e50250883a83a7191b890cf42624ee6e4bf0b731',
+            'client_id': os.environ.get('GITHUB_CLIENT_ID', ''),
+            'secret': os.environ.get('GITHUB_SECRET_KEY', ''),
             'key': '',
         },
     },
     'instagram': {
         'APP': {
-            'client_id': '',
-            'secret': '',
+            'client_id': os.environ.get('INSTAGRAM_CLIENT_ID', ''),
+            'secret': os.environ.get('INSTAGRAM_SECRET_KEY', ''),
             'key': '',
         },
     },

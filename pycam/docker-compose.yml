@@ -15,7 +15,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=pycam
     ports:
-      - "8092:5432" # to avoid local ports from clashing
+      - "8093:5432" # changed from 8092 to avoid conflict
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - postgres_backup:/backups
@@ -50,17 +50,25 @@ services:
     volumes:
       - .:/app
     labels:
-      - "traefik.http.routers.web.rule=Host(`pycam.docker.localhost`)"
+      - "traefik.http.routers.web.rule=Host(`pycam.docker.localhost`) || Host(`localhost`)"
+      - "traefik.http.services.web.loadbalancer.server.port=8000"
+      - "traefik.http.routers.web-8090.rule=Host(`localhost`) && PathPrefix(`/`)"
+      - "traefik.http.routers.web-8090.service=web"
+      - "traefik.http.routers.web-8090.entrypoints=web"
     ports:
-      - "8001:8000"  # Changed from 8000:8000 to resolve port conflict
+      - "8000:8090"  # Expose Django directly on port 8090
     depends_on:
       - database
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
-      pwd
+      # Install PyJWT explicitly
+      pip install pyjwt
+
+      # Database setup
       python manage.py makemigrations
       python manage.py migrate
+
       # Create superuser if not exists
       python manage.py shell <<EOF
       from django.contrib.auth.models import User
@@ -73,8 +81,9 @@ services:
           print("Superuser 'devadmin' already exists.")
       EOF
 
-      echo Starting Django development server..
-      poetry run pycam/manage.py runserver 0.0.0.0:8000
+      echo "Starting Django development server..."
+      # Run Django directly, not through Poetry
+      python manage.py runserver 0.0.0.0:8090
     environment:
       - DJANGO_SETTINGS_MODULE=pycam.settings
       - DATABASE_URL=postgresql://postgres:postgres@database:5432/pycam
@@ -87,5 +96,5 @@ services:
 
 networks:
   default:
-      name: pycamuresandpower
+      name: pycam_network
 
