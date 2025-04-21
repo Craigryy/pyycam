@@ -2,12 +2,16 @@
 
 {% block title %}Log In | PyCAM{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/login.css">
+{% endblock %}
+
 {% block content %}
-<div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+<div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 login-container">
     <div class="sm:mx-auto sm:w-full sm:max-w-md z-10 relative px-4">
         <div class="bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10">
             <div class="text-center mb-6">
-                <img class="mx-auto h-16 w-auto" src="/static/images/transparentback.png" alt="PyCAM Logo">
+                <img class="mx-auto h-16 w-auto" src="/static/image/transparentback.png" alt="PyCAM Logo">
                 <h2 class="mt-4 text-2xl font-bold text-gray-900">Log in or sign up in seconds</h2>
                 <p class="mt-2 text-sm text-gray-600">Use your email or another service to continue with PyCAM</p>
             </div>

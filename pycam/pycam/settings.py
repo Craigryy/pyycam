@@ -11,10 +11,15 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
+# Try to import dotenv, but handle case when it's not installed
+try:
+    from dotenv import load_dotenv
+    # Load environment variables from .env file
+    load_dotenv()
+except ImportError:
+    # python-dotenv not installed, continue without it
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -96,9 +101,13 @@ WSGI_APPLICATION = 'pycam.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-SQLITE = True
+# Default to PostgreSQL unless explicitly set to use SQLite
+SQLITE = False
 
-if SQLITE:
+# Use SQLite if explicitly specified or if running locally
+USE_SQLITE = os.environ.get('DJANGO_DATABASE') == 'sqlite' or SQLITE
+
+if USE_SQLITE:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -112,7 +121,7 @@ else:
             'NAME': 'pycam',
             'USER': 'postgres',
             'PASSWORD': 'postgres',
-            'HOST': 'db',
+            'HOST': 'database',
             'PORT': '5432',
         }
     }
@@ -259,7 +268,8 @@ SOCIALACCOUNT_FORMS = {}  # Use default forms when necessary
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+# ACCOUNT_AUTHENTICATION_METHOD is deprecated, replaced by:
+# ACCOUNT_LOGIN_METHODS = {'username', 'email'} (already defined above)
 
 # Enable social accounts
 SOCIALACCOUNT_ENABLED = True

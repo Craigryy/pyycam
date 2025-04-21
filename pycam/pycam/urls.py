@@ -22,8 +22,7 @@ from editor import views as editor_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', editor_views.login, name='login_page'),
-    path('editor/', include('editor.urls')),
+    path('', include('editor.urls')),
     path('accounts/', include('allauth.urls')),
 ]
 

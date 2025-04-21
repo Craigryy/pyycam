@@ -11,16 +11,16 @@ services:
     image: postgres:13-alpine
     container_name: pycam_db
     environment:
-      - POSTGRES_PASSWORD=pycam_power
-      - POSTGRES_USER=pycam_power
-      - POSTGRES_DB=pycam_power
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=pycam
     ports:
       - "8092:5432" # to avoid local ports from clashing
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - postgres_backup:/backups
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pycam_power"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 10s
       retries: 5
@@ -52,7 +52,7 @@ services:
     labels:
       - "traefik.http.routers.web.rule=Host(`pycam.docker.localhost`)"
     ports:
-      - "8000:8000"
+      - "8001:8000"  # Changed from 8000:8000 to resolve port conflict
     depends_on:
       - database
     entrypoint: ["/bin/sh","-c"]
@@ -77,11 +77,11 @@ services:
       poetry run pycam/manage.py runserver 0.0.0.0:8000
     environment:
       - DJANGO_SETTINGS_MODULE=pycam.settings
-      - DATABASE_URL=postgresql://pycam_power:pycam_power@database:5432/pycam_power
-      - DB_NAME=pycam_power
+      - DATABASE_URL=postgresql://postgres:postgres@database:5432/pycam
+      - DB_NAME=pycam
       - DB_PORT=5432
-      - DB_USER=pycam_power
-      - DB_PASSWORD=pycam_power
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
       - DB_HOST=database
       - ENVIRONMENT=dev
 

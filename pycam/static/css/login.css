@@ -1,247 +1,96 @@
 /* Login Page Styles */
-body.login-page {
-    background-image: url('/static/backgroundpycam.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    padding-top: 0;
-    margin: 0;
-}
-
-.login-overlay {
-    background-color: rgba(0, 0, 0, 0.6);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-
 .login-container {
-    background: white;
-    color: #333;
-    border-radius: 0.5rem;
-    padding: 2rem;
-    width: 100%;
-    max-width: 380px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    position: relative;
+    z-index: 10;
+}
+
+.login-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
 }
 
-.login-logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.main-logo {
-    max-width: 120px;
-    height: auto;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+.login-title {
+    color: #1a202c;
+    font-weight: 700;
+    margin-top: 1rem;
 }
 
 .login-subtitle {
-    color: #333;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.login-description {
-    color: #666;
-    font-size: 0.9rem;
-    margin: 0 0 1.5rem;
-}
-
-.social-login {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.social-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.7rem 1rem;
-    border-radius: 0.25rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    width: 100%;
-    text-decoration: none;
-    font-size: 0.9rem;
-    border: 1px solid #e0e0e0;
-    background-color: white;
-    color: #555;
-    position: relative;
-    overflow: hidden;
-}
-
-.social-btn i {
-    font-size: 1.2rem;
-    margin-right: 0.75rem;
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    position: relative;
-    z-index: 2;
-}
-
-.social-btn:hover i {
-    transform: scale(1.3);
-    animation: pulse 0.4s ease-in-out;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.4);
-    }
-    100% {
-        transform: scale(1.3);
-    }
-}
-
-.social-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 2rem;
-    width: 0;
-    height: 0;
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    transition: width 0.3s ease, height 0.3s ease;
-    z-index: 1;
-}
-
-.social-btn:hover::before {
-    width: 3rem;
-    height: 3rem;
-}
-
-/* Google colors */
-.google-btn i {
-    color: #DB4437;
-    text-shadow: 0 0 0 rgba(219, 68, 55, 0);
-}
-
-.google-btn:hover i {
-    text-shadow: 0 0 10px rgba(219, 68, 55, 0.5);
-}
-
-/* Facebook colors */
-.facebook-btn i {
-    color: #4267B2;
-    text-shadow: 0 0 0 rgba(66, 103, 178, 0);
-}
-
-.facebook-btn:hover i {
-    text-shadow: 0 0 10px rgba(66, 103, 178, 0.5);
-}
-
-/* GitHub colors */
-.github-btn i {
-    color: #333;
-    text-shadow: 0 0 0 rgba(51, 51, 51, 0);
-}
-
-.github-btn:hover i {
-    text-shadow: 0 0 10px rgba(51, 51, 51, 0.5);
-}
-
-/* Email colors */
-.email-btn i {
-    color: #5F6368;
-    text-shadow: 0 0 0 rgba(95, 99, 104, 0);
-}
-
-.email-btn:hover i {
-    text-shadow: 0 0 10px rgba(95, 99, 104, 0.5);
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 1.5rem 0;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.divider span {
-    padding: 0 0.75rem;
-    color: #888;
+    color: #4a5568;
     font-size: 0.875rem;
 }
 
-.form-control {
-    border-radius: 0.25rem;
+.social-login-button {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 0.75rem 1rem;
-    border: 1px solid #e0e0e0;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s ease;
+    margin-bottom: 0.75rem;
+    width: 100%;
+}
+
+.social-login-button i {
+    position: absolute;
+    left: 1rem;
+    font-size: 1.25rem;
+}
+
+.social-login-button:hover {
+    transform: translateY(-2px);
+}
+
+.google-button {
     background-color: white;
-    color: #333;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
 }
 
-.form-control::placeholder {
-    color: #aaa;
-}
-
-.form-label {
-    color: #555;
-}
-
-.form-check-label {
-    color: #666;
-}
-
-.login-btn {
-    background-color: #4a6cf7;
+.facebook-button {
+    background-color: #4267B2;
     color: white;
     border: none;
-    border-radius: 0.25rem;
-    padding: 0.75rem;
-    font-weight: 500;
-    width: 100%;
-    margin-top: 1rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(74, 108, 247, 0.15);
 }
 
-.login-btn:hover {
-    background-color: #3a5ce5;
-    box-shadow: 0 6px 10px rgba(74, 108, 247, 0.25);
-    transform: translateY(-1px);
+.github-button {
+    background-color: #24292e;
+    color: white;
+    border: none;
+}
+
+.email-button {
+    background-color: #f7fafc;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
 }
 
 .login-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     text-align: center;
-    padding: 1rem;
-    color: #fff;
-    font-size: 0.8rem;
-    background-color: rgba(0, 0, 0, 0.3);
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 1.5rem;
 }
 
 .login-footer a {
-    color: #fff;
-    margin-left: 10px;
+    color: #4299e1;
     text-decoration: none;
 }
 
@@ -249,25 +98,28 @@ body.login-page {
     text-decoration: underline;
 }
 
-/* Terms and Privacy Link */
-.terms-privacy {
+/* Background overlay */
+.bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 0;
+}
+
+/* Footer */
+.login-page-footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 0.5rem 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
     text-align: center;
-    font-size: 0.7rem;
-    color: #888;
-    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    z-index: 20;
 }
 
-.terms-privacy a {
-    color: #4a6cf7;
-    text-decoration: none;
-}
-
-.terms-privacy a:hover {
-    text-decoration: underline;
-}
-
-/* Hide navigation and footer on login page */
-body.login-page .navbar,
-body.login-page main > footer {
-    display: none;
-}
+/* This is all we need for the login page */
