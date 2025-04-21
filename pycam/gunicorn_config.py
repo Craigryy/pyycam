@@ -39,19 +39,15 @@ worker_connections = 1000
 # Important settings for handling database connections
 def post_fork(server, worker):
     """Initialize worker environment after fork"""
-    server.log.info("Worker initialized, connections ready")
+    server.log.info("Worker initialized")
 
 def worker_exit(server, worker):
-    """Close database connections when worker exits"""
-    from django.db import connections
-    connections.close_all()
-    server.log.info("Worker exited, closed all connections")
+    """Handle worker exit"""
+    server.log.info("Worker exited")
 
 def worker_abort(worker):
-    """Close database connections when worker aborted"""
-    from django.db import connections
-    connections.close_all()
-    worker.log.info("Worker aborted, closed all connections")
+    """Handle worker abort"""
+    worker.log.info("Worker aborted")
 
 # Recommended settings for Render
 forwarded_allow_ips = "*"
