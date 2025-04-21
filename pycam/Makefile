@@ -60,7 +60,7 @@ collect:
 sqlite-run: ## Start the Django development server using sqlite3
 	DJANGO_DATABASE=sqlite python manage.py makemigrations
 	DJANGO_DATABASE=sqlite python manage.py migrate
-	DJANGO_DATABASE=sqlite python manage.py runserver 0.0.0.0:8001
+	DJANGO_DATABASE=sqlite python manage.py runserver 0.0.0.0:8080
 
 # dump data
 dumpdata: ## dump data from docker db container

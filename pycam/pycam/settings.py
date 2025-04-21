@@ -206,8 +206,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v13.0',
         'APP': {
-            'client_id': os.environ.get('FACEBOOK_CLIENT_ID', ''),
-            'secret': os.environ.get('FACEBOOK_CLIENT_SECRET', ''),
+            'client_id': '611840314516615',
+            'secret': 'a4218fbbf3cd04d7d30f2e50d12e2037',
             'key': '',
         },
     },
@@ -216,22 +216,22 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
-            'secret': os.environ.get('GOOGLE_CLIENT_SECRET', ''),
+            'client_id': '855966894412-jdv0939lv8h7s04oh73ncf4epplu4ovi.apps.googleusercontent',
+            'secret': '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',
             'key': '',
         },
     },
     'github': {
         'APP': {
-            'client_id': os.environ.get('GITHUB_CLIENT_ID', ''),
-            'secret': os.environ.get('GITHUB_CLIENT_SECRET', ''),
+            'client_id': 'Iv23liy2fTBsqUcvrb8S',
+            'secret': 'e50250883a83a7191b890cf42624ee6e4bf0b731',
             'key': '',
         },
     },
     'instagram': {
         'APP': {
-            'client_id': os.environ.get('INSTAGRAM_CLIENT_ID', ''),
-            'secret': os.environ.get('INSTAGRAM_CLIENT_SECRET', ''),
+            'client_id': '',
+            'secret': '',
             'key': '',
         },
     },

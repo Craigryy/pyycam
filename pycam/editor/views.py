@@ -22,7 +22,7 @@ def login(request):
         return redirect('home')
     return render(request, 'login.html')
 
-@login_required
+# @login_required
 def homepage(request):
     """
     Main view for the photo editor homepage.
