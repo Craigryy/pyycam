@@ -3,7 +3,8 @@ services:
     name: pycam
     env: python
     buildCommand: "./build.sh"
-    startCommand: "cd pycam && gunicorn pycam.wsgi:application --bind 0.0.0.0:$PORT --config gunicorn_config.py"
+    startCommand: ""  # Empty string indicates to use the Procfile
+    plan: free
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
@@ -18,7 +19,7 @@ services:
       - key: ENVIRONMENT
         value: production
       - key: WEB_CONCURRENCY
-        value: 4
+        value: 2
       - key: THREADS_PER_WORKER
         value: 1
       - key: GUNICORN_LOG_LEVEL

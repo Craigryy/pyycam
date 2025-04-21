@@ -22,7 +22,7 @@ else:
     # Use SQLite for local development with proper options
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
+            'ENGINE': 'pycam.db_backends',  # Use our custom SQLite backend with retry logic
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
             'OPTIONS': {
                 'timeout': 60,  # Wait longer for locks
@@ -157,8 +157,7 @@ LOGGING = {
 }
 
 # Session configuration
-SESSION_ENGINE = 'django.contrib.sessions.backends.file'
-SESSION_FILE_PATH = os.path.join(BASE_DIR, 'sessions')
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 
 # Social account provider settings
