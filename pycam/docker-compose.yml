@@ -51,7 +51,7 @@ services:
       - .:/app
     labels:
       - "traefik.http.routers.web.rule=Host(`pycam.docker.localhost`) || Host(`localhost`)"
-      - "traefik.http.services.web.loadbalancer.server.port=8000"
+      - "traefik.http.services.web.loadbalancer.server.port=8080"
       - "traefik.http.routers.web-8090.rule=Host(`localhost`) && PathPrefix(`/`)"
       - "traefik.http.routers.web-8090.service=web"
       - "traefik.http.routers.web-8090.entrypoints=web"
