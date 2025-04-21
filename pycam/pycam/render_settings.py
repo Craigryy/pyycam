@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ['*']
 database_url = os.environ.get('DATABASE_URL')
 if database_url:
     DATABASES = {
-        'default': dj_database_url.parse(database_url, conn_max_age=600)
+        'default': dj_database_url.parse(database_url, conn_max_age=0)  # Set to 0 to close connections after each request
     }
 else:
     # Fallback to SQLite if no DATABASE_URL is provided
@@ -25,6 +25,32 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
+
+# Explicitly set atomic requests to True
+for db_name in DATABASES:
+    DATABASES[db_name]['ATOMIC_REQUESTS'] = True
+    DATABASES[db_name]['CONN_MAX_AGE'] = 0  # Force close connections after each request
+
+# Important Django threading settings
+THREADING = {
+    'AUTOCOMMIT': True,  # Let Django handle transactions
+}
+
+# Django Allauth settings
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = False
+SOCIALACCOUNT_AUTO_SIGNUP = True
+
+# Make sure login redirects work properly
+LOGIN_REDIRECT_URL = '/home/'
+LOGIN_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+# Improve allauth threading behavior
+SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
 
 # CSRF settings for Render - accept all origins temporarily
 CSRF_TRUSTED_ORIGINS = [
@@ -90,6 +116,11 @@ LOGGING = {
     },
     'loggers': {
         'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.db.backends': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
