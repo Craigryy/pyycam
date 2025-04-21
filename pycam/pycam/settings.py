@@ -208,8 +208,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v13.0',
         'APP': {
-            'client_id': os.environ.get('FACEBOOK_CLIENT_ID', ''),
-            'secret': os.environ.get('FACEBOOK_SECRET_KEY', ''),
+            'client_id': '611840314516615',
+            'secret': 'a4218fbbf3cd04d7d30f2e50d12e2037',
             'key': '',
         },
     },
@@ -225,8 +225,8 @@ SOCIALACCOUNT_PROVIDERS = {
     },
     'github': {
         'APP': {
-            'client_id': os.environ.get('GITHUB_CLIENT_ID', ''),
-            'secret': os.environ.get('GITHUB_SECRET_KEY', ''),
+            'client_id': 'Iv23liy2fTBsqUcvrb8S',
+            'secret': '8ac8c2280f9d5a64537d4d5e3491e7bb2e556232',
             'key': '',
         },
     },
