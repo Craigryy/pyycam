@@ -49,8 +49,8 @@ LOGIN_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 # Use our custom thread-safe adapters
-SOCIALACCOUNT_ADAPTER = 'editor.adapters.ThreadSafeSocialAccountAdapter'
-ACCOUNT_ADAPTER = 'editor.adapters.ThreadSafeAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
+ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
 
 # Fix django-allauth threading issues
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
