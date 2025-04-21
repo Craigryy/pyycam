@@ -1,29 +1,18 @@
-# PyCAM - Photo Editor
+# PyCam
 
-![PyCAM Logo](pycam_header.jpeg)
+A Django-based web application for photo editing.
+
+## Features
+- Photo editing tools
+- User accounts
+- Cloud storage integration
+
+## Deployment
+This application is configured for deployment on Render.com.
 
 ## Overview
 
 PyCAM is a modern, web-based photo editing application that allows users to easily upload, edit, and share their images. It offers a user-friendly interface with real-time effects and a personal gallery.
-
-## Features
-
-- **Simple Upload**: Drag and drop or select images from your device
-- **Real-time Effects**: Apply various effects to your images:
-  - Brightness adjustment
-  - Contrast enhancement
-  - Grayscale conversion
-  - Sepia tone
-  - Blur effects
-  - Color inversion
-  - Saturation adjustment
-- **Personal Gallery**: Save edited images to your personal gallery
-- **Sharing Options**: Easily share your creations:
-  - Download in high quality
-  - Share to Facebook
-  - Share to Instagram
-  - (More platforms coming soon)
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 
 ## Technology Stack
 
@@ -86,29 +75,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Font Awesome](https://fontawesome.com/) for icons
 - [Bootstrap](https://getbootstrap.com/) for UI components
 - All the contributors who helped build PyCAM
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Based on your screenshots of the Render dashboard, here's what you should fill in each field:
 
