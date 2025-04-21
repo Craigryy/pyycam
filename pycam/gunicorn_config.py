@@ -38,12 +38,8 @@ worker_connections = 1000
 
 # Important settings for handling database connections
 def post_fork(server, worker):
-    """Close any database connections to avoid thread/process issues"""
-    from django.db import connections
-    for conn in connections.all():
-        conn.close()
-
-    server.log.info("Worker synced no connections")
+    """Initialize worker environment after fork"""
+    server.log.info("Worker initialized, connections ready")
 
 def worker_exit(server, worker):
     """Close database connections when worker exits"""

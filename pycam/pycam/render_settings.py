@@ -14,11 +14,12 @@ ALLOWED_HOSTS = ['*']
 # Configure the database using Render's DATABASE_URL environment variable
 database_url = os.environ.get('DATABASE_URL')
 if database_url:
+    # Use PostgreSQL on Render
     DATABASES = {
-        'default': dj_database_url.parse(database_url, conn_max_age=0)  # Close connections after each request
+        'default': dj_database_url.parse(database_url, conn_max_age=60)  # Keep connections open longer
     }
 else:
-    # Fallback to SQLite if no DATABASE_URL is provided
+    # Use SQLite for local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -26,10 +27,13 @@ else:
         }
     }
 
-# Explicitly set atomic requests to True
+# Database connection settings
 for db_name in DATABASES:
     DATABASES[db_name]['ATOMIC_REQUESTS'] = True
-    DATABASES[db_name]['CONN_MAX_AGE'] = 0  # Force close connections after each request
+
+    # Don't force connections to close immediately
+    # But still have a reasonable timeout
+    DATABASES[db_name]['CONN_MAX_AGE'] = 60  # 60 seconds before connection recycling
 
 # Important Django threading settings
 THREADING = {
@@ -138,3 +142,8 @@ LOGGING = {
         },
     },
 }
+
+# Session configuration
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use database-backed sessions
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_COOKIE_SECURE = False  # For debugging, should be True in actual prod
