@@ -15,7 +15,7 @@ ALLOWED_HOSTS = ['*']
 database_url = os.environ.get('DATABASE_URL')
 if database_url:
     DATABASES = {
-        'default': dj_database_url.parse(database_url, conn_max_age=600)  # Set to 0 to close connections after each request
+        'default': dj_database_url.parse(database_url, conn_max_age=0)  # Close connections after each request
     }
 else:
     # Fallback to SQLite if no DATABASE_URL is provided
@@ -29,7 +29,7 @@ else:
 # Explicitly set atomic requests to True
 for db_name in DATABASES:
     DATABASES[db_name]['ATOMIC_REQUESTS'] = True
-    DATABASES[db_name]['CONN_MAX_AGE'] = 600  # Force close connections after each request
+    DATABASES[db_name]['CONN_MAX_AGE'] = 0  # Force close connections after each request
 
 # Important Django threading settings
 THREADING = {
