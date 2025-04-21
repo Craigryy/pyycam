@@ -52,11 +52,11 @@ services:
     labels:
       - "traefik.http.routers.web.rule=Host(`pycam.docker.localhost`) || Host(`localhost`)"
       - "traefik.http.services.web.loadbalancer.server.port=8080"
-      - "traefik.http.routers.web-8090.rule=Host(`localhost`) && PathPrefix(`/`)"
-      - "traefik.http.routers.web-8090.service=web"
-      - "traefik.http.routers.web-8090.entrypoints=web"
+      - "traefik.http.routers.web-8000.rule=Host(`localhost`) && PathPrefix(`/`)"
+      - "traefik.http.routers.web-8000.service=web"
+      - "traefik.http.routers.web-8000.entrypoints=web"
     ports:
-      - "8000:8090"  # Expose Django directly on port 8090
+      - "8000:8000"  # Expose Django directly on port 8000
     depends_on:
       - database
     entrypoint: ["/bin/sh","-c"]
@@ -83,7 +83,7 @@ services:
 
       echo "Starting Django development server..."
       # Run Django directly, not through Poetry
-      python manage.py runserver 0.0.0.0:8090
+      python manage.py runserver 0.0.0.0:8000
     environment:
       - DJANGO_SETTINGS_MODULE=pycam.settings
       - DATABASE_URL=postgresql://postgres:postgres@database:5432/pycam

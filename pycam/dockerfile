@@ -13,7 +13,7 @@ EXPOSE 8000
 # 2. Set PORT variable that is used by Gunicorn. This should match "EXPOSE"
 #    command.
 ENV PYTHONUNBUFFERED=1 \
-    PORT=8090
+    PORT=8000
 
 ARG BUILD_ENV=dev
 ARG POETRY_VERSION=1.6.1
