@@ -216,8 +216,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': '855966894412-jdv0939lv8h7s04oh73ncf4epplu4ovi.apps.googleusercontent',
-            'secret': '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',
+            'client_id': '855966894412-jdv0939lv8h7s04oh73ncf4epp1u4ovi.apps.googleusercontent.com',
+            'secret': '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',
             'key': '',
         },
     },

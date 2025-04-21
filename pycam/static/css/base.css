@@ -19,14 +19,76 @@
   box-sizing: border-box;
 }
 
+/* Styles moved from base.html */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+}
+
 body {
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--light-color);
+  background-image: url('/static/image/backgroundpycam.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding-top: 0;
 }
 
+.card {
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.navbar {
+  background-color: transparent !important;
+  color: white;
+}
+
+.navbar-brand {
+  font-weight: bold;
+}
+
+.nav-link {
+  color: white !important;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #f0f0f0 !important;
+}
+
+.header-container {
+  color: white;
+  padding: 20px 0;
+  margin-bottom: 30px;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.main-container {
+  background-color: transparent;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+/* Original base.css content */
 a {
   color: var(--secondary-color);
   text-decoration: none;
