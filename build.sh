@@ -13,6 +13,10 @@ cd pycam
 poetry config virtualenvs.create false
 poetry install --only main --no-interaction --no-ansi
 
+# Create sessions directory
+mkdir -p sessions
+chmod 777 sessions
+
 # Run migrations
 python manage.py collectstatic --noinput
 python manage.py migrate

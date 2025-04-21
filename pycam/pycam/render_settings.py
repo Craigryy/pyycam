@@ -16,7 +16,7 @@ database_url = os.environ.get('DATABASE_URL')
 if database_url:
     # Use PostgreSQL on Render
     DATABASES = {
-        'default': dj_database_url.parse(database_url, conn_max_age=300)  # 5 minutes connection lifetime
+        'default': dj_database_url.parse(database_url, conn_max_age=0)  # Always close connections
     }
 else:
     # Use SQLite for local development with proper options
@@ -25,7 +25,7 @@ else:
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
             'OPTIONS': {
-                'timeout': 30,  # Wait longer for locks
+                'timeout': 60,  # Wait longer for locks
             }
         }
     }
@@ -33,7 +33,7 @@ else:
 # Database connection settings
 for db_name in DATABASES:
     DATABASES[db_name]['ATOMIC_REQUESTS'] = True
-    DATABASES[db_name]['CONN_MAX_AGE'] = 60  # 1 minute max connection age
+    DATABASES[db_name]['CONN_MAX_AGE'] = 0  # Always close connections after each request
 
 # Important Django threading settings
 THREADING = {
@@ -157,7 +157,8 @@ LOGGING = {
 }
 
 # Session configuration
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Use database-backed sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+SESSION_FILE_PATH = os.path.join(BASE_DIR, 'sessions')
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 
 # Social account provider settings
