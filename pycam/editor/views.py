@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.core.files.base import ContentFile
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.db import close_old_connections, connection
 from .models import ImageEdit
 from .forms import ImageEditForm
 from .effects import apply_effect
@@ -17,10 +18,21 @@ import time
 def login(request):
     """
     Custom login view that renders the login.html template.
+    With added database connection handling for thread safety.
     """
+    # Close any existing database connections to prevent thread issues
+    close_old_connections()
+
     if request.user.is_authenticated:
         return redirect('home')
-    return render(request, 'login.html')
+
+    # Render the login template with a fresh database connection
+    response = render(request, 'login.html')
+
+    # Close connections after processing
+    close_old_connections()
+
+    return response
 
 # @login_required
 def homepage(request):
@@ -28,6 +40,9 @@ def homepage(request):
     Main view for the photo editor homepage.
     Displays the editor interface and the user's gallery of edited images.
     """
+    # Close any existing database connections to prevent thread issues
+    close_old_connections()
+
     if not request.user.is_authenticated:
         # Try multiple approaches to direct to login.html
         return redirect('login_page')
@@ -36,19 +51,34 @@ def homepage(request):
     images = ImageEdit.objects.filter(user=request.user).order_by('-created_at')
     form = ImageEditForm()
 
-    return render(request, 'homepage.html', {
+    response = render(request, 'homepage.html', {
         'images': images,
         'form': form,
     })
+
+    # Close connections after processing
+    close_old_connections()
+
+    return response
 
 
 def login_view(request):
     """
     Custom login view that renders the login.html template.
+    With added database connection handling for thread safety.
     """
+    # Close any existing database connections to prevent thread issues
+    close_old_connections()
+
     if request.user.is_authenticated:
         return redirect('home')
-    return render(request, 'login.html')
+
+    response = render(request, 'login.html')
+
+    # Close connections after processing
+    close_old_connections()
+
+    return response
 
 
 @login_required
@@ -58,6 +88,9 @@ def apply_image_effect(request):
     API endpoint to apply an effect to an image and return the result.
     This is called via AJAX from the frontend.
     """
+    # Close any existing database connections to prevent thread issues
+    close_old_connections()
+
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             # Process AJAX request
@@ -66,6 +99,7 @@ def apply_image_effect(request):
             intensity = request.POST.get('intensity', 50)
 
             if not effect_name or not image_data:
+                close_old_connections()
                 return JsonResponse({'status': 'error', 'message': 'Missing effect or image data'})
 
             # Process the base64 image
@@ -94,18 +128,23 @@ def apply_image_effect(request):
                 processed_image.save(buffer, format=ext.upper())
                 img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-                return JsonResponse({
+                response = JsonResponse({
                     'status': 'success',
                     'image': f'data:image/{ext};base64,{img_str}',
                     'effect': effect_name
                 })
+                close_old_connections()
+                return response
             except Exception as e:
                 logger = logging.getLogger(__name__)
                 logger.error(f"Error processing image: {str(e)}")
+                close_old_connections()
                 return JsonResponse({'status': 'error', 'message': f'Error processing image: {str(e)}'})
         except Exception as e:
+            close_old_connections()
             return JsonResponse({'status': 'error', 'message': f'Server error: {str(e)}'})
 
+    close_old_connections()
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 
