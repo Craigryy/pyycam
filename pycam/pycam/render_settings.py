@@ -52,8 +52,8 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
 
-# Fix django-allauth threading issues
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
+# Fix django-allauth threading issues - use JSONSerializer instead of PickleSerializer
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # CSRF settings for Render - accept all origins temporarily
 CSRF_TRUSTED_ORIGINS = [
