@@ -6,11 +6,13 @@ import dj_database_url
 from .settings import *  # Import base settings
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True  # Temporarily set to True for troubleshooting
 
 # Allow only Render domains and your custom domain
 ALLOWED_HOSTS = [
     '.onrender.com',  # Allow all Render subdomains
+    'pycam.onrender.com',  # Explicit domain
+    'www.pycam.onrender.com',  # www subdomain
     'localhost',      # For local testing
     '127.0.0.1',      # For local testing
 ]
