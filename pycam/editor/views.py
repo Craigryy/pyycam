@@ -20,7 +20,6 @@ def login(request):
     Custom login view that renders the login.html template.
     With added database connection handling for thread safety.
     """
-    # Close any existing database connections to prevent thread issues
 
 
     if request.user.is_authenticated:
@@ -54,7 +53,6 @@ def homepage(request):
         'form': form,
     })
 
-    # Close connections after processing
 
     return response
 
