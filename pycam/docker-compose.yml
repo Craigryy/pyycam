@@ -8,7 +8,7 @@ volumes:
 services:
   database:
     restart: always
-    image: postgres:13-alpine
+    image: postgres:14-alpine
     container_name: pycam_db
     environment:
       - POSTGRES_PASSWORD=postgres
@@ -93,6 +93,7 @@ services:
       - DB_PASSWORD=postgres
       - DB_HOST=database
       - ENVIRONMENT=dev
+      - DOCKER_CONTAINER=true
 
 networks:
   default:

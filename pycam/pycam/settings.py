@@ -109,8 +109,11 @@ import dj_database_url
 # Check if we're running on Render
 IS_RENDER = 'RENDER' in os.environ
 
+# Check if we're running in Docker
+IS_DOCKER = os.environ.get('DOCKER_CONTAINER', '') == 'true' or os.path.exists('/.dockerenv')
+
 # Check if we should use SQLite based on environment variable
-USE_SQLITE = os.environ.get('DJANGO_DATABASE', '').lower() == 'sqlite'
+USE_SQLITE = os.environ.get('DJANGO_DATABASE', '').lower() == 'sqlite' and not IS_DOCKER
 
 # Configure database based on environment
 if IS_RENDER:
@@ -123,7 +126,7 @@ if IS_RENDER:
     else:
         raise Exception("No DATABASE_URL found in Render environment")
 elif USE_SQLITE:
-    # Use SQLite for local development when DJANGO_DATABASE=sqlite
+    # Use SQLite for local development when DJANGO_DATABASE=sqlite and not in Docker
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

@@ -116,3 +116,4 @@ wagtail-modeladmin==2.1.0
 Willow==1.9.0
 zipp==3.21.0
 zstandard==0.23.0
+dj-database-url

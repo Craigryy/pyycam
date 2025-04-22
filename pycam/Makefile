@@ -75,23 +75,6 @@ loaddata: ## load dumped data into docker db container
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-# Start app on localhost:8080
-run-on-8080: ## Run everything and make it accessible on localhost:8080
-	@echo "Starting application on localhost:8080..."
-	$(DOCKER_COMPOSE) down -v --remove-orphans
-	$(DOCKER_COMPOSE) up -d
-	@echo "Waiting for services to start..."
-	@sleep 5
-	$(BROWSER) "http://localhost:8080"
-
-
-# Start app directly on port 8090
-docker-run-8090: ## Run app on port 8090 with direct access
-	@echo "Starting app on port 8090..."
-	$(DOCKER_COMPOSE) down --remove-orphans
-	$(DOCKER_COMPOSE) up -d
-	@echo "Application should be available at http://localhost:8090"
-	$(BROWSER) "http://localhost:8090"
 
 # Show installed packages in container
 pip-list: ## Show installed packages in the web container
