@@ -21,7 +21,7 @@ def login(request):
     With added database connection handling for thread safety.
     """
     # Close any existing database connections to prevent thread issues
-    close_old_connections()
+
 
     if request.user.is_authenticated:
         return redirect('home')
@@ -65,7 +65,7 @@ def login_view(request):
     With added database connection handling for thread safety.
     """
     # Close any existing database connections to prevent thread issues
-    close_old_connections()
+
 
     if request.user.is_authenticated:
         return redirect('home')
@@ -73,7 +73,7 @@ def login_view(request):
     response = render(request, 'login.html')
 
     # Close connections after processing
-    close_old_connections()
+
 
     return response
 
@@ -86,7 +86,7 @@ def apply_image_effect(request):
     This is called via AJAX from the frontend.
     """
     # Close any existing database connections to prevent thread issues
-    close_old_connections()
+   
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
@@ -96,7 +96,7 @@ def apply_image_effect(request):
             intensity = request.POST.get('intensity', 50)
 
             if not effect_name or not image_data:
-                close_old_connections()
+
                 return JsonResponse({'status': 'error', 'message': 'Missing effect or image data'})
 
             # Process the base64 image
@@ -130,18 +130,18 @@ def apply_image_effect(request):
                     'image': f'data:image/{ext};base64,{img_str}',
                     'effect': effect_name
                 })
-                close_old_connections()
+
                 return response
             except Exception as e:
                 logger = logging.getLogger(__name__)
                 logger.error(f"Error processing image: {str(e)}")
-                close_old_connections()
+
                 return JsonResponse({'status': 'error', 'message': f'Error processing image: {str(e)}'})
         except Exception as e:
-            close_old_connections()
+
             return JsonResponse({'status': 'error', 'message': f'Server error: {str(e)}'})
 
-    close_old_connections()
+
     return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
 

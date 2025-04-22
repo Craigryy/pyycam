@@ -20,6 +20,8 @@ python manage.py migrate
 # Update Site configuration
 python manage.py update_site
 
+DATABASE_URL set
+
 # Create superuser
 python manage.py shell << EOF
 from django.contrib.auth.models import User

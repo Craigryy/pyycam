@@ -1,11 +1,11 @@
 import os
-import multiprocessing
+from django.db import connections
 
 # Bind to the port specified by Render
 bind = f"0.0.0.0:{os.environ.get('PORT', '8000')}"
 
-# Number of worker processes - using sync worker
-workers = 4  # Fixed worker count to prevent database connection issues
+# Fixed number of worker processes
+workers = 4
 
 # Use sync worker type to avoid gevent threading issues
 worker_class = "sync"
@@ -37,22 +37,13 @@ loglevel = os.environ.get("GUNICORN_LOG_LEVEL", "info")
 worker_connections = 1000
 
 # Important settings for handling database connections
-def post_fork(server, worker):
-    """Initialize worker environment after fork"""
-    # Don't manually close connections here
-    server.log.info("Worker initialized")
-
 def worker_exit(server, worker):
     """Handle worker exit - clean up resources"""
-    # It's good practice to close connections when the worker exits
-    from django.db import connections
     connections.close_all()
     server.log.info("Worker exited, cleaned up connections")
 
 def worker_abort(worker):
     """Handle worker abort - clean up resources"""
-    # It's good practice to close connections when the worker is aborted
-    from django.db import connections
     connections.close_all()
     worker.log.info("Worker aborted, cleaned up connections")
 

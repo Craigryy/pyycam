@@ -2,7 +2,9 @@
 Production settings for Django deployment on Render.com
 """
 import os
-import dj_database_url
+# Set RENDER environment variable to ensure database configuration works correctly
+os.environ['RENDER'] = 'True'
+
 from .settings import *  # Import base settings
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -11,38 +13,8 @@ DEBUG = True  # Keep debug on until we resolve issues
 # Allow all hosts temporarily for troubleshooting
 ALLOWED_HOSTS = ['*']
 
-# Configure the database using Render's DATABASE_URL environment variable
-database_url = os.environ.get('DATABASE_URL')
-if database_url:
-    # Use PostgreSQL on Render
-    DATABASES = {
-        'default': dj_database_url.parse(database_url, conn_max_age=0)  # Always close connections
-    }
-else:
-    # Use global PostgreSQL database for local development
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME', 'pycam_global'),
-            'USER': os.environ.get('DB_USER', 'pycam_user'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', 'pycam_password'),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', '5432'),
-            'OPTIONS': {
-                'connect_timeout': 10,
-            }
-        }
-    }
-
-# Database connection settings
-for db_name in DATABASES:
-    DATABASES[db_name]['ATOMIC_REQUESTS'] = True
-    DATABASES[db_name]['CONN_MAX_AGE'] = 0  # Always close connections after each request
-
-# Important Django threading settings
-THREADING = {
-    'AUTOCOMMIT': True,  # Let Django handle transactions
-}
+# Database connection settings - no need to redefine database config
+# since it's already handled in settings.py via DATABASE_URL
 
 # Add database connection middleware
 MIDDLEWARE = MIDDLEWARE + [

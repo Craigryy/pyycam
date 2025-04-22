@@ -103,10 +103,27 @@ WSGI_APPLICATION = 'pycam.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Always use PostgreSQL by default
-USE_SQLITE = os.environ.get('DJANGO_DATABASE') == 'sqlite'
+# Use dj-database-url for simpler database configuration
+import dj_database_url
 
-if USE_SQLITE:
+# Check if we're running on Render
+IS_RENDER = 'RENDER' in os.environ
+
+# Default to PostgreSQL locally unless SQLITE is explicitly True
+SQLITE = os.environ.get('SQLITE', '').lower() == 'true'
+
+# Configure database based on environment
+if IS_RENDER:
+    # On Render, use the provided DATABASE_URL
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        DATABASES = {
+            'default': dj_database_url.parse(database_url, conn_max_age=0)
+        }
+    else:
+        raise Exception("No DATABASE_URL found in Render environment")
+elif SQLITE:
+    # Use SQLite for local development if explicitly requested
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -114,6 +131,7 @@ if USE_SQLITE:
         }
     }
 else:
+    # Use local PostgreSQL by default for local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -126,6 +144,11 @@ else:
             'ATOMIC_REQUESTS': True,  # Enable transaction per request
         }
     }
+
+# Always apply these database settings
+for db_name in DATABASES:
+    DATABASES[db_name]['ATOMIC_REQUESTS'] = True
+    DATABASES[db_name]['CONN_MAX_AGE'] = 0  # Always close connections
 
 
 # Password validation
