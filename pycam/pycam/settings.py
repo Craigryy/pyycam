@@ -230,8 +230,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v13.0',
         'APP': {
-            'client_id': '611840314516615',
-            'secret': 'a4218fbbf3cd04d7d30f2e50d12e2037',
+            'client_id': '1207155697630778',
+            'secret': 'ccac63fbb5d2537022a7c1a54f803ea0',
             'key': '',
         },
     },
