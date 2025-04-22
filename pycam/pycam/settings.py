@@ -109,8 +109,8 @@ import dj_database_url
 # Check if we're running on Render
 IS_RENDER = 'RENDER' in os.environ
 
-# Default to PostgreSQL locally unless SQLITE is explicitly True
-SQLITE = os.environ.get('SQLITE', '').lower() == 'true'
+# Check if we should use SQLite based on environment variable
+USE_SQLITE = os.environ.get('DJANGO_DATABASE', '').lower() == 'sqlite'
 
 # Configure database based on environment
 if IS_RENDER:
@@ -122,8 +122,8 @@ if IS_RENDER:
         }
     else:
         raise Exception("No DATABASE_URL found in Render environment")
-elif SQLITE:
-    # Use SQLite for local development if explicitly requested
+elif USE_SQLITE:
+    # Use SQLite for local development when DJANGO_DATABASE=sqlite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -131,7 +131,7 @@ elif SQLITE:
         }
     }
 else:
-    # Use local PostgreSQL by default for local development
+    # Use PostgreSQL for Docker and other environments
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -140,8 +140,6 @@ else:
             'PASSWORD': os.environ.get('DB_PASSWORD', 'pycam_password'),
             'HOST': os.environ.get('DB_HOST', 'localhost'),
             'PORT': os.environ.get('DB_PORT', '5432'),
-            'CONN_MAX_AGE': 0,  # Always close connections after each request
-            'ATOMIC_REQUESTS': True,  # Enable transaction per request
         }
     }
 
@@ -230,8 +228,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v13.0',
         'APP': {
-            'client_id': '611840314516615',
-            'secret': 'a4218fbbf3cd04d7d30f2e50d12e2037',
+            'client_id': '1207155697630778',
+            'secret': 'ccac63fbb5d2537022a7c1a54f803ea0',
             'key': '',
         },
     },
@@ -240,8 +238,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': '849173175385-bl6vnevp4m92vgsldgk7d9kn3n7h1t0g.apps.googleusercontent.com',
-            'secret': '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',
+            # 'client_id': '849173175385-bl6vnevp4m92vgsldgk7d9kn3n7h1t0g.apps.googleusercontent.com',
+            # 'secret': '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',
             'key': '',
         },
     },

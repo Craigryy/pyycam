@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from django.db import close_old_connections, connection
 from .models import ImageEdit
 from .forms import ImageEditForm
 from .effects import apply_effect
@@ -86,7 +85,7 @@ def apply_image_effect(request):
     This is called via AJAX from the frontend.
     """
     # Close any existing database connections to prevent thread issues
-   
+
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
