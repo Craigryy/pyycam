@@ -22,7 +22,7 @@ else:
     # Use SQLite for local development with proper options
     DATABASES = {
         'default': {
-            'ENGINE': 'pycam.db_backends',  # Use our custom SQLite backend with retry logic
+            'ENGINE': 'django.db.backends.sqlite3',  # Revert to standard SQLite for now
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
             'OPTIONS': {
                 'timeout': 60,  # Wait longer for locks

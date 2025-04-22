@@ -8,7 +8,7 @@ from django.db.utils import OperationalError, InterfaceError, ProgrammingError
 
 logger = logging.getLogger(__name__)
 
-class RetryingDatabaseWrapper(SQLite3DatabaseWrapper):
+class DatabaseWrapper(SQLite3DatabaseWrapper):
     """
     Database wrapper for SQLite3 that automatically retries operations
     that fail due to connection issues
