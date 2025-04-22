@@ -103,11 +103,8 @@ WSGI_APPLICATION = 'pycam.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Default to PostgreSQL unless explicitly set to use SQLite
-SQLITE = False
-
-# Use SQLite if explicitly specified or if running locally
-USE_SQLITE = os.environ.get('DJANGO_DATABASE') == 'sqlite' or SQLITE
+# Always use PostgreSQL by default
+USE_SQLITE = os.environ.get('DJANGO_DATABASE') == 'sqlite'
 
 if USE_SQLITE:
     DATABASES = {
@@ -120,11 +117,13 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'pycam',
-            'USER': 'postgres',
-            'PASSWORD': 'postgres',
-            'HOST': 'database',
-            'PORT': '5432',
+            'NAME': os.environ.get('DB_NAME', 'pycam_global'),
+            'USER': os.environ.get('DB_USER', 'pycam_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'pycam_password'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'CONN_MAX_AGE': 0,  # Always close connections after each request
+            'ATOMIC_REQUESTS': True,  # Enable transaction per request
         }
     }
 

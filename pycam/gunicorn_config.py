@@ -5,7 +5,7 @@ import multiprocessing
 bind = f"0.0.0.0:{os.environ.get('PORT', '8000')}"
 
 # Number of worker processes - using sync worker
-workers = int(os.environ.get("WEB_CONCURRENCY", 4))
+workers = 4  # Fixed worker count to prevent database connection issues
 
 # Use sync worker type to avoid gevent threading issues
 worker_class = "sync"

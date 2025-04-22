@@ -29,8 +29,7 @@ def login(request):
     # Render the login template with a fresh database connection
     response = render(request, 'login.html')
 
-    # Close connections after processing
-    close_old_connections()
+
 
     return response
 
@@ -40,8 +39,7 @@ def homepage(request):
     Main view for the photo editor homepage.
     Displays the editor interface and the user's gallery of edited images.
     """
-    # Close any existing database connections to prevent thread issues
-    close_old_connections()
+
 
     if not request.user.is_authenticated:
         # Try multiple approaches to direct to login.html
@@ -57,7 +55,6 @@ def homepage(request):
     })
 
     # Close connections after processing
-    close_old_connections()
 
     return response
 

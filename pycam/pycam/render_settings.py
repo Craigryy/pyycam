@@ -19,13 +19,17 @@ if database_url:
         'default': dj_database_url.parse(database_url, conn_max_age=0)  # Always close connections
     }
 else:
-    # Use SQLite for local development with proper options
+    # Use global PostgreSQL database for local development
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',  # Revert to standard SQLite for now
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'pycam_global'),
+            'USER': os.environ.get('DB_USER', 'pycam_user'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'pycam_password'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
             'OPTIONS': {
-                'timeout': 60,  # Wait longer for locks
+                'connect_timeout': 10,
             }
         }
     }
