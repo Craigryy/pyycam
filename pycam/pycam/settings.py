@@ -230,8 +230,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v13.0',
         'APP': {
-            'client_id': '611840314516615',
-            'secret': 'a4218fbbf3cd04d7d30f2e50d12e2037',
+            'client_id': '',
+            'secret': '',
             'key': '',
         },
     },
@@ -240,8 +240,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
-            'secret': os.environ.get('GOOGLE_SECRET_KEY', ''),
+            'client_id': '',
+            'secret': '',
             'key': '',
         },
     },
