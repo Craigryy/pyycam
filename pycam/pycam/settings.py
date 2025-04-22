@@ -230,8 +230,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v13.0',
         'APP': {
-            'client_id': '',
-            'secret': '',
+            'client_id': '611840314516615',
+            'secret': 'a4218fbbf3cd04d7d30f2e50d12e2037',
             'key': '',
         },
     },
@@ -240,8 +240,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'access_type': 'online',
         },
         'APP': {
-            'client_id': '',
-            'secret': '',
+            'client_id': '849173175385-bl6vnevp4m92vgsldgk7d9kn3n7h1t0g.apps.googleusercontent.com',
+            'secret': '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',
             'key': '',
         },
     },
@@ -292,8 +292,7 @@ SOCIALACCOUNT_FORMS = {}  # Use default forms when necessary
 SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-# ACCOUNT_AUTHENTICATION_METHOD is deprecated, replaced by:
-# ACCOUNT_LOGIN_METHODS = {'username', 'email'} (already defined above)
+
 
 # Enable social accounts
 SOCIALACCOUNT_ENABLED = True

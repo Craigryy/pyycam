@@ -137,53 +137,6 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 
 # Social account provider settings
-SOCIALACCOUNT_PROVIDERS = {
-    'facebook': {
-        'METHOD': 'oauth2',
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-        'INIT_PARAMS': {'cookie': True},
-        'FIELDS': [
-            'id',
-            'email',
-            'name',
-            'first_name',
-            'last_name',
-            'picture'
-        ],
-        'EXCHANGE_TOKEN': True,
-        'VERIFIED_EMAIL': False,
-        'VERSION': 'v13.0',
-        'APP': {
-            'client_id': '611840314516615',
-            'secret': 'a4218fbbf3cd04d7d30f2e50d12e2037',
-            'key': '',
-        },
-    },
-    'google': {
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'APP': {
-            'client_id': os.environ.get('GOOGLE_CLIENT_ID', ''),
-            'secret': os.environ.get('GOOGLE_SECRET_KEY', ''),
-            'key': '',
-        },
-    },
-    'github': {
-        'APP': {
-            'client_id': 'Iv23liy2fTBsqUcvrb8S',
-            'secret': '8ac8c2280f9d5a64537d4d5e3491e7bb2e556232',
-            'key': '',
-        },
-    },
-    'instagram': {
-        'APP': {
-            'client_id': os.environ.get('INSTAGRAM_CLIENT_ID', ''),
-            'secret': os.environ.get('INSTAGRAM_SECRET_KEY', ''),
-            'key': '',
-        },
-    },
-}
 
 # Redirect URLs
 LOGIN_URL = '/'
@@ -200,7 +153,7 @@ ACCOUNT_LOGOUT_ON_GET = True  # Bypass the logout confirmation page
 # Disable login confirmations and streamline login process
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
-ACCOUNT_SESSION_REMEMBER = True  # Remember user sessions by default
+ACCOUNT_SESSION_REMEMBER = True  # Remember user sessions by defaults
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True  # Confirm email immediately on click
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = 'home'
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = 'account_login'
