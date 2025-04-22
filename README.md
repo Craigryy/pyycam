@@ -1,6 +1,9 @@
+![pycamHeader](https://github.com/user-attachments/assets/55a9b4be-cc6e-4839-91c8-24018ac2f71d)
+
+
+
 # PyCAM - Photo Editor
 
-![PyCAM Logo](pycam_header.jpeg)
 
 ## Overview
 
@@ -50,17 +53,12 @@ PyCAM is a modern, web-based photo editing application that allows users to easi
    pip install -r requirements.txt
    ```
 
-4. Run migrations:
+4. Run make file:
    ```bash
-   python manage.py migrate
+   cd pycam && make sqlite-run 
    ```
 
-5. Start the development server:
-   ```bash
-   python manage.py runserver
-   ```
-
-6. Visit `http://localhost:8080/` in your browser
+. Visit `http://localhost:8080/` in your browser
 
 ## Usage
 
@@ -68,24 +66,6 @@ PyCAM is a modern, web-based photo editing application that allows users to easi
 2. **Apply Effects**: Select from the effects panel to preview changes
 3. **Save Edited Image**: Click the Save button to add to your gallery
 4. **Share Your Creation**: Open the gallery and use the sharing options
-
-## Browser Compatibility
-
-PyCAM works with all modern browsers including:
-- Chrome
-- Firefox
-- Safari
-- Edge
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- [Font Awesome](https://fontawesome.com/) for icons
-- [Bootstrap](https://getbootstrap.com/) for UI components
-- All the contributors who helped build PyCAM
 
 
 
