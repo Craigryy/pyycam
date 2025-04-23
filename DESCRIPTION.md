@@ -1,1 +1,0 @@
-PyCAM is a modern web-based photo editor that lets users apply real-time effects, maintain a personal gallery, and easily share their creations. Built with Python/Django backend and responsive HTML/CSS/JS frontend, it offers a seamless experience across all devices. Features include various image filters, one-click sharing to social media, and a clean, intuitive interface.
