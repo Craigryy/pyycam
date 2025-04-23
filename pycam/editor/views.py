@@ -18,17 +18,11 @@ import time
 def login(request):
     """
     Custom login view that renders the login.html template.
-    With added database connection handling for thread safety.
     """
-
-
     if request.user.is_authenticated:
         return redirect('home')
 
-    # Render the login template with a fresh database connection
     response = render(request, 'login.html')
-
-
 
     return response
 
@@ -38,7 +32,6 @@ def homepage(request):
     Main view for the photo editor homepage.
     Displays the editor interface and the user's gallery of edited images.
     """
-
 
     if not request.user.is_authenticated:
         # Try multiple approaches to direct to login.html
@@ -57,35 +50,13 @@ def homepage(request):
     return response
 
 
-def login_view(request):
-    """
-    Custom login view that renders the login.html template.
-    With added database connection handling for thread safety.
-    """
-    # Close any existing database connections to prevent thread issues
-
-
-    if request.user.is_authenticated:
-        return redirect('home')
-
-    response = render(request, 'login.html')
-
-    # Close connections after processing
-
-
-    return response
-
 
 @login_required
 @require_POST
 def apply_image_effect(request):
     """
     API endpoint to apply an effect to an image and return the result.
-    This is called via AJAX from the frontend.
     """
-    # Close any existing database connections to prevent thread issues
-   
-
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             # Process AJAX request
@@ -148,7 +119,6 @@ def apply_image_effect(request):
 def save_image(request):
     """
     Save an edited image to the user's gallery.
-    This is called when the user clicks the Save button.
     """
     try:
         # Set up logging
@@ -281,17 +251,18 @@ def delete_image(request, image_id):
     """
     Delete an image from the user's gallery.
     """
+    is_ajax = request.method == 'DELETE' and request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
     try:
         image = get_object_or_404(ImageEdit, id=image_id, user=request.user)
         image.delete()
 
-        # For AJAX requests
-        if request.method == 'DELETE' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if is_ajax:
             return JsonResponse({'success': True})
 
         messages.success(request, 'Image deleted successfully!')
     except Exception as e:
-        if request.method == 'DELETE' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        if is_ajax:
             return JsonResponse({'success': False, 'error': str(e)})
         messages.error(request, f'Error deleting image: {str(e)}')
 
