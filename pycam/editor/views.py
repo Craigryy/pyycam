@@ -108,20 +108,26 @@ def save_image(request):
 
                 # Process with effect if one was selected
                 if effect_applied and effect_applied != 'original':
+                    #get the original image
                     original_img = Image.open(request.FILES['original_image'])
+                    #apply the effect
                     processed_img = apply_effect(original_img, effect_applied)
 
                     # Save both original and processed images
                     image_edit.save()
 
                     # Save processed image to edited_image field
-                    buffer = io.BytesIO()
+                    img_data = io.BytesIO()
+                    #get the format of the image
                     img_format = 'JPEG' if request.FILES['original_image'].name.lower().endswith('.jpg') else 'PNG'
-                    processed_img.save(buffer, format=img_format)
+                    #save the image
+                    processed_img.save(img_data, format=img_format)
 
                     timestamp = int(time.time())
+                    #get the filename
                     filename = f"edited_{request.user.id}_{effect_applied}_{timestamp}.{img_format.lower()}"
-                    image_edit.edited_image.save(filename, ContentFile(buffer.getvalue()))
+                    #save the image
+                    image_edit.edited_image.save(filename, ContentFile(img_data.getvalue()))
                 else:
                     # No effect - just use original
                     image_edit.edited_image = image_edit.original_image
