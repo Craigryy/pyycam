@@ -15,282 +15,215 @@ from PIL import Image
 import logging
 import time
 
-def login(request):
-    """
-    Custom login view that renders the login.html template.
-    """
+# Set up logging
+logger = logging.getLogger(__name__)
+
+def login_view(request):
+    """Simple login page that redirects authenticated users"""
     if request.user.is_authenticated:
         return redirect('home')
+    return render(request, 'login.html')
 
-    response = render(request, 'login.html')
-
-    return response
-
-# @login_required
 def homepage(request):
-    """
-    Main view for the photo editor homepage.
-    Displays the editor interface and the user's gallery of edited images.
-    """
-
+    """Homepage with editor and gallery - requires login"""
     if not request.user.is_authenticated:
-        # Try multiple approaches to direct to login.html
         return redirect('login_page')
 
-    # Get all images uploaded by the current user
+    # Get user's images for the gallery
     images = ImageEdit.objects.filter(user=request.user).order_by('-created_at')
     form = ImageEditForm()
 
-    response = render(request, 'homepage.html', {
+    return render(request, 'homepage.html', {
         'images': images,
         'form': form,
     })
 
-
-    return response
-
-
-
 @login_required
 @require_POST
 def apply_image_effect(request):
-    """
-    API endpoint to apply an effect to an image and return the result.
-    """
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        try:
-            # Process AJAX request
-            effect_name = request.POST.get('effect')
-            image_data = request.POST.get('image')
-            intensity = request.POST.get('intensity', 50)
+    """Apply image effects and return processed image preview"""
+    #Implement to debug to know if there is an error , reason is because we want to make sure the request is coming from the frontend
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':#this is a check to see if the request is an AJAX request,reason is because we want to make sure the request is coming from the frontend
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'})#this is a response to the request if it is not an AJAX request
 
-            if not effect_name or not image_data:
-
-                return JsonResponse({'status': 'error', 'message': 'Missing effect or image data'})
-
-            # Process the base64 image
-            try:
-                format, imgstr = image_data.split(';base64,')
-                ext = format.split('/')[-1]
-
-                # Convert base64 to PIL Image
-                img_data = base64.b64decode(imgstr)
-                img = Image.open(io.BytesIO(img_data))
-
-                # Debug info
-                logger = logging.getLogger(__name__)
-                logger.info(f"Processing image with effect: {effect_name}")
-                logger.info(f"Image size: {img.size}, mode: {img.mode}")
-
-                # Apply the selected effect and ensure it returns a valid image
-                processed_image = apply_effect(img, effect_name)
-
-                # Ensure the image is in RGB mode for consistent results
-                if processed_image.mode != 'RGB':
-                    processed_image = processed_image.convert('RGB')
-
-                # Convert processed image back to base64 for preview
-                buffer = io.BytesIO()
-                processed_image.save(buffer, format=ext.upper())
-                img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
-
-                response = JsonResponse({
-                    'status': 'success',
-                    'image': f'data:image/{ext};base64,{img_str}',
-                    'effect': effect_name
-                })
-
-                return response
-            except Exception as e:
-                logger = logging.getLogger(__name__)
-                logger.error(f"Error processing image: {str(e)}")
-
-                return JsonResponse({'status': 'error', 'message': f'Error processing image: {str(e)}'})
-        except Exception as e:
-
-            return JsonResponse({'status': 'error', 'message': f'Server error: {str(e)}'})
+    try:
+        # Get request data
+        effect_name = request.POST.get('effect')
+        image_data = request.POST.get('image')
 
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+        if not effect_name or not image_data:
+            return JsonResponse({'status': 'error', 'message': 'Missing effect or image data'})
 
+        # Extract image data from base64
+        format, imgstr = image_data.split(';base64,')#note the image data is long and has a ;base64, at the end, so we need to split it
+        # Get the file extension
+        ext = format.split('/')[-1]#this is the file extention needed "e.g - jpg, png, etc."
+        # Decode the image data
+        img_data = base64.b64decode(imgstr)#this is the image data in bytes
+        # Open the image
+        img = Image.open(io.BytesIO(img_data))#this is the image object, reason is python can manage the image data in bytes and manipulate it
+
+        # Log basic info - helps me debug
+        logger.info(f"Processing {effect_name} effect on {img.size} image")
+
+        # Process image with selected effect
+        processed_image = apply_effect(img, effect_name)
+        if processed_image.mode != 'RGB':
+            processed_image = processed_image.convert('RGB')
+
+        # Return processed image as base64
+        image_data = io.BytesIO()
+        processed_image.save(image_data, format=ext.upper())
+        img_str = base64.b64encode(image_data.getvalue()).decode('utf-8')
+
+        return JsonResponse({
+            'status': 'success',
+            'image': f'data:image/{ext};base64,{img_str}',
+            'effect': effect_name
+        })
+
+    except Exception as e:
+        logger.error(f"Error applying effect: {str(e)}")
+        return JsonResponse({'status': 'error', 'message': f'Error: {str(e)}'})
 
 @login_required
 @require_POST
 def save_image(request):
-    """
-    Save an edited image to the user's gallery.
-    """
-    try:
-        # Set up logging
-        logger = logging.getLogger(__name__)
-        logger.info(f"Save image request received: {request.headers.get('X-Requested-With')}")
+    """Save edited image to user's gallery - supports both form and AJAX methods"""
+    # Debug to know if there is an error , reason is because we want to make sure the request is coming from the frontend
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    logger.info(f"Save image request: {'AJAX' if is_ajax else 'form'}")
 
-        # Check for file upload first (from form submission)
-        if 'original_image' in request.FILES:
+    try:
+        # Handle regular form upload
+        if 'original_image' in request.FILES:#this is a check to see if the request has an original image
             form = ImageEditForm(request.POST, request.FILES)
             if form.is_valid():
-                # Create a new ImageEdit object
+                # Create and save the image edit
                 image_edit = form.save(commit=False)
                 image_edit.user = request.user
-
-                # Get the effect applied
                 effect_applied = request.POST.get('effect_applied', '')
                 image_edit.effect_applied = effect_applied
-                logger.info(f"File upload with effect: {effect_applied}")
 
-                # Process the image with the effect server-side
+                # Process with effect if one was selected
                 if effect_applied and effect_applied != 'original':
-                    # Open the uploaded image
                     original_img = Image.open(request.FILES['original_image'])
-
-                    # Apply the effect
                     processed_img = apply_effect(original_img, effect_applied)
 
-                    # Save the processed image
+                    # Save both original and processed images
+                    image_edit.save()
+
+                    # Save processed image to edited_image field
                     buffer = io.BytesIO()
                     img_format = 'JPEG' if request.FILES['original_image'].name.lower().endswith('.jpg') else 'PNG'
                     processed_img.save(buffer, format=img_format)
 
-                    # Save the original image first
-                    image_edit.save()
-
-                    # Then save the edited image
-                    image_edit.edited_image.save(
-                        f"edited_{request.user.id}_{effect_applied}_{int(time.time())}.{img_format.lower()}",
-                        ContentFile(buffer.getvalue())
-                    )
+                    timestamp = int(time.time())
+                    filename = f"edited_{request.user.id}_{effect_applied}_{timestamp}.{img_format.lower()}"
+                    image_edit.edited_image.save(filename, ContentFile(buffer.getvalue()))
                 else:
-                    # No effect - just use original image
+                    # No effect - just use original
                     image_edit.edited_image = image_edit.original_image
                     image_edit.save()
 
                 messages.success(request, 'Image saved successfully!')
-
-                # Redirect or return JSON response
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    return JsonResponse({'success': True})
-                return redirect('home')
+                return JsonResponse({'success': True}) if is_ajax else redirect('home')
             else:
                 # Form validation failed
                 logger.error(f"Form validation failed: {form.errors}")
-                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                if is_ajax:
                     return JsonResponse({'success': False, 'error': 'Invalid form data'})
                 messages.error(request, 'Error saving image. Please try again.')
                 return redirect('home')
 
-        # Handle AJAX requests with image data (from JavaScript)
-        elif request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Handle AJAX image data
+        elif is_ajax:
             effect = request.POST.get('effect_applied', '')
             image_data = request.POST.get('image')
 
-            logger.info(f"AJAX image save request with effect: {effect}")
-
             if not image_data:
-                logger.error("No image data provided in AJAX request")
                 return JsonResponse({'success': False, 'error': 'No image data provided'})
 
-            try:
-                # Process the base64 image (already filtered in frontend)
-                if ';base64,' not in image_data:
-                    logger.error("Invalid image data format")
-                    return JsonResponse({'success': False, 'error': 'Invalid image data format'})
+            # Check image format and extract data
+            if ';base64,' not in image_data:
+                return JsonResponse({'success': False, 'error': 'Invalid image data format'})
 
-                format, imgstr = image_data.split(';base64,')
-                ext = format.split('/')[-1]
-                img_data = base64.b64decode(imgstr)
+            format, imgstr = image_data.split(';base64,')
+            ext = format.split('/')[-1]
+            img_data = base64.b64decode(imgstr)
 
-                # Generate a unique ID for the image
-                timestamp = int(time.time())
-                unique_id = f"{request.user.id}_{timestamp}"
-                logger.info(f"Generated unique ID for image: {unique_id}")
+            # Create unique identifier for this image
+            timestamp = int(time.time())
+            unique_id = f"{request.user.id}_{timestamp}"
 
-                # Create an ImageEdit object
-                image_edit = ImageEdit(
-                    user=request.user,
-                    effect_applied=effect
-                )
+            # Create and save ImageEdit object
+            image_edit = ImageEdit(
+                user=request.user,
+                effect_applied=effect
+            )
 
-                # Save the original image data (as is)
-                original_filename = f"original_{unique_id}.{ext}"
-                image_edit.original_image.save(
-                    original_filename,
-                    ContentFile(img_data)
-                )
+            # Save both original and edited versions
+            image_edit.original_image.save(f"original_{unique_id}.{ext}", ContentFile(img_data))
+            image_edit.edited_image.save(f"edited_{unique_id}_{effect}.{ext}", ContentFile(img_data))
+            image_edit.save()
 
-                # Save the filtered image exactly as received (no reprocessing)
-                edited_filename = f"edited_{unique_id}_{effect}.{ext}"
-                image_edit.edited_image.save(
-                    edited_filename,
-                    ContentFile(img_data)
-                )
+            logger.info(f"AJAX image saved with ID: {image_edit.id}")
 
-                image_edit.save()
-                logger.info(f"Image saved successfully with ID: {image_edit.id}")
-
-                return JsonResponse({
-                    'success': True,
-                    'message': 'Image saved successfully',
-                    'image_id': image_edit.id
-                })
-
-            except Exception as e:
-                logger.error(f"Error processing AJAX image save: {str(e)}")
-                return JsonResponse({'success': False, 'error': str(e)})
+            return JsonResponse({
+                'success': True,
+                'message': 'Image saved successfully',
+                'image_id': image_edit.id
+            })
 
     except Exception as e:
-        logger.error(f"General error in save_image: {str(e)}")
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        logger.error(f"Error saving image: {str(e)}")
+        if is_ajax:
             return JsonResponse({'success': False, 'error': str(e)})
         messages.error(request, f'Error saving image: {str(e)}')
 
     return redirect('home')
 
-
 @login_required
 def delete_image(request, image_id):
-    """
-    Delete an image from the user's gallery.
-    """
+    """Delete an image from the user's gallery"""
+    # Check if this is an AJAX request - I put this here so it's easy to find
     is_ajax = request.method == 'DELETE' and request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
     try:
+        # Get and delete the image
         image = get_object_or_404(ImageEdit, id=image_id, user=request.user)
         image.delete()
 
+        # Handle AJAX success response
         if is_ajax:
             return JsonResponse({'success': True})
 
+        # Handle regular form success
         messages.success(request, 'Image deleted successfully!')
     except Exception as e:
+        # Handle errors appropriately for request type
         if is_ajax:
             return JsonResponse({'success': False, 'error': str(e)})
         messages.error(request, f'Error deleting image: {str(e)}')
 
     return redirect('home')
 
-
 @login_required
 def share_image(request, image_id):
-    """
-    Get shareable link for an image.
-    """
+    """Get a shareable link for the specified image"""
     image = get_object_or_404(ImageEdit, id=image_id, user=request.user)
 
-    # Create a shareable URL (this is a simple implementation)
+    # Get full URL to the image
     share_url = request.build_absolute_uri(image.edited_image.url)
 
+    # Return JSON for AJAX requests, otherwise redirect
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'success': True, 'url': share_url})
-
-    # For direct browser access, redirect to the image
     return redirect(image.edited_image.url)
 
-
 def api_overview(request):
-    """
-    API overview endpoint.
-    Provides information about available API endpoints.
-    """
+    """API documentation endpoint - lists available API endpoints"""
     api_urls = {
         'Apply Effect': '/apply-effect/',
         'Save Image': '/save/',

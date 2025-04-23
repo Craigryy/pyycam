@@ -5,7 +5,7 @@ from allauth.socialaccount.providers.facebook.views import oauth2_login as faceb
 from allauth.socialaccount.providers.github.views import oauth2_login as github_login_view
 
 urlpatterns = [
-    path('', views.login, name='login_page'),
+    path('', views.login_view, name='login_page'),
     path('home/', views.homepage, name='home'),
     path('apply-effect/', views.apply_image_effect, name='apply_effect'),
     path('save/', views.save_image, name='save_image'),
