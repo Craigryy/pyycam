@@ -51,7 +51,6 @@ def apply_image_effect(request):
         effect_name = request.POST.get('effect')
         image_data = request.POST.get('image')
 
-
         if not effect_name or not image_data:
             return JsonResponse({'status': 'error', 'message': 'Missing effect or image data'})
 

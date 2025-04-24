@@ -11,7 +11,7 @@ terraform {
     key            = "tf-state-setup"
     region         = "eu-north-1"
     encrypt        = true
-    dynamodb_table = "devops-pycam-app-tf-lock"
+    use_lockfile = "devops-pycam-app-tf-lock"
   }
 }
 

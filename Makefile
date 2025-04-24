@@ -42,31 +42,25 @@ navigate: ## Navigate to pycam.docker.localhost
 
 # Start Docker app
 start: ## Start the Docker app
-	$(DOCKER_COMPOSE) up
+	cd pycam && $(DOCKER_COMPOSE) up
 
 start-detach: ## Start the Docker app
-	$(DOCKER_COMPOSE) up -d
+	cd pycam && $(DOCKER_COMPOSE) up -d
 
 
 # Build Docker containers
 build: ## Build Docker containers
-	$(DOCKER_COMPOSE) build
+	cd pycam && $(DOCKER_COMPOSE) build
 
 collect:
-	python manage.py collectstatic
+	cd pycam && python manage.py collectstatic
 
 
 # Local Development server
 sqlite-run: ## Start the Django development server using sqlite3
-	DJANGO_DATABASE=sqlite python manage.py makemigrations
-	DJANGO_DATABASE=sqlite python manage.py migrate
-	DJANGO_DATABASE=sqlite python manage.py runserver 0.0.0.0:8080
-
-# Direct run on port 8090
-sqlite-run-8090: ## Start the Django development server on port 8090 using sqlite3
-	DJANGO_DATABASE=sqlite python manage.py makemigrations
-	DJANGO_DATABASE=sqlite python manage.py migrate
-	DJANGO_DATABASE=sqlite python manage.py runserver 0.0.0.0:8090
+	cd pycam && DJANGO_DATABASE=sqlite python manage.py makemigrations
+	cd pycam && DJANGO_DATABASE=sqlite python manage.py migrate
+	cd pycam && DJANGO_DATABASE=sqlite python manage.py runserver 0.0.0.0:8080
 
 # dump data
 dumpdata: ## dump data from docker db container
