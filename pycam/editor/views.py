@@ -18,7 +18,7 @@ import time
 # Set up logging
 logger = logging.getLogger(__name__)
 
-def login_view(request):
+def login(request):
     """Simple login page that redirects authenticated users"""
     if request.user.is_authenticated:
         return redirect('home')

@@ -8,7 +8,7 @@ terraform {
 
   backend "s3" {
     bucket         = "devops-pycam-app-state"
-    key            = "tf-state-setup-pycam"
+    key            = "tf-state-setup"
     region         = "eu-north-1"
     encrypt        = true
     dynamodb_table = "devops-pycam-app-tf-lock"

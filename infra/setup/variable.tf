@@ -10,7 +10,7 @@ variable "tf_state_lock_table" {
 
 variable "project" {
   description = "Project name for tagging resources"
-  default     = "recipe-app-api"
+  default     = "pycam-app-api"
 }
 
 variable "contact" {

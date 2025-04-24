@@ -105,6 +105,59 @@ docker-run-8090: ## Run app on port 8090 with direct access
 pip-list: ## Show installed packages in the web container
 	docker exec -it pycam_web pip freeze
 
-# Manually install PyJWT in container
-install-jwt: ## Install PyJWT in the container
-	docker exec -it pycam_web pip install pyjwt
+
+init-setup:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  terraform -chdir=setup init
+
+init-setup-fmt:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  terraform -chdir=setup fmt
+
+init-deploy:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  	terraform -chdir=deploy init
+
+init-deploy-fmt:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  terraform -chdir=deploy fmt
+
+plan-setup:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  terraform -chdir=setup plan
+
+plan-deploy:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  terraform -chdir=deploy plan
+
+validate-setup:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  terraform -chdir=setup validate
+
+validate-deploy:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  terraform -chdir=deploy validate
