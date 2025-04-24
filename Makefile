@@ -122,10 +122,10 @@ init-setup-fmt:
 
 init-deploy:
 	cd infra && sudo docker compose run --rm \
-  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
-  	terraform -chdir=deploy init
+	  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+	  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+	  -e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
+	  terraform -chdir=deploy init
 
 init-deploy-fmt:
 	cd infra && sudo docker compose run --rm \
@@ -161,3 +161,4 @@ validate-deploy:
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
   terraform -chdir=deploy validate
+
