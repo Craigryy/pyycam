@@ -2,6 +2,7 @@ from django.db import close_old_connections
 from django.db.utils import OperationalError, ProgrammingError, InterfaceError
 import logging
 
+
 class DatabaseConnectionMiddleware:
     """
     Middleware that manages database connections to prevent

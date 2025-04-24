@@ -1,89 +1,174 @@
 from PIL import Image, ImageFilter, ImageEnhance, ImageOps
-import numpy as np
 
-def apply_effect(image, effect_name, intensity=50):
-    """
-    Apply the specified effect to the given image.
+
+def apply_effect(image, effect_name):
+    """Apply selected effect to image.
 
     Args:
         image: PIL Image object
-        effect_name: String name of the effect to apply
-        intensity: Integer from 0-100 representing the strength of the effect
+        effect_name: String with effect name
 
     Returns:
-        PIL Image with the effect applied
+        PIL Image with effect applied
     """
-    # Normalize intensity to a 0-1 range
-    intensity_factor = intensity / 100.0
+    effect_functions = {
+        'grayscale': apply_grayscale,
+        'sepia': apply_sepia,
+        'blur': apply_blur,
+        'sharpen': apply_sharpen,
+        'contour': apply_contour,
+        'edge_enhance': apply_edge_enhance,
+        'brightness': apply_brightness,
+        'contrast': apply_contrast,
+        'invert': apply_invert,
+        'solarize': apply_solarize,
+        'emboss': apply_emboss,
+        'posterize': apply_posterize,
+        'cartoon': apply_cartoon,
+        'vignette': apply_vignette,
+        'vintage': apply_vintage,
+        'cool': apply_cool,
+        'warm': apply_warm,
+        'original': lambda img: img,
+    }
 
-    # Make a copy to avoid modifying the original
-    img = image.copy()
+    if effect_name not in effect_functions:
+        return image
 
-    # Convert to RGB if in another mode
-    if img.mode != 'RGB':
-        img = img.convert('RGB')
+    # Return image with applied effect
+    return effect_functions[effect_name](image)
 
-    # Apply the selected effect
-    if effect_name == 'grayscale':
-        return ImageOps.grayscale(img).convert('RGB')
 
-    elif effect_name == 'sepia':
-        return apply_sepia(img)
+def apply_grayscale(image):
+    """Convert image to grayscale."""
+    return ImageOps.grayscale(image).convert('RGB')
 
-    elif effect_name == 'blur':
-        # Adjust blur radius based on intensity
-        radius = 1 + (intensity_factor * 5)
-        return img.filter(ImageFilter.GaussianBlur(radius=radius))
-
-    elif effect_name == 'sharpen':
-        enhancer = ImageEnhance.Sharpness(img)
-        # Map intensity to a suitable range (1 is original, >1 is sharper)
-        sharpness_factor = 1 + (intensity_factor * 2)
-        return enhancer.enhance(sharpness_factor)
-
-    elif effect_name == 'brightness':
-        enhancer = ImageEnhance.Brightness(img)
-        # Map intensity to a suitable range
-        brightness_factor = 0.5 + intensity_factor
-        return enhancer.enhance(brightness_factor)
-
-    elif effect_name == 'contrast':
-        enhancer = ImageEnhance.Contrast(img)
-        # Map intensity to a suitable range
-        contrast_factor = 0.5 + intensity_factor
-        return enhancer.enhance(contrast_factor)
-
-    elif effect_name == 'invert':
-        return ImageOps.invert(img)
-
-    elif effect_name == 'edge_enhance':
-        return img.filter(ImageFilter.EDGE_ENHANCE)
-
-    elif effect_name == 'emboss':
-        return img.filter(ImageFilter.EMBOSS)
-
-    elif effect_name == 'contour':
-        return img.filter(ImageFilter.CONTOUR)
-
-    # Add more effects as needed
-
-    # Default: return the original image
-    return img
 
 def apply_sepia(image):
-    """Apply a sepia tone effect to the image."""
-    # Convert to numpy array for easier pixel manipulation
-    img_array = np.array(image)
+    """Apply sepia tone to image."""
+    gray_image = ImageOps.grayscale(image)
+    sepia_image = Image.new('RGB', gray_image.size)
 
-    # Sepia tone matrix transformation
-    sepia_matrix = [
-        [0.393, 0.769, 0.189],
-        [0.349, 0.686, 0.168],
-        [0.272, 0.534, 0.131]
-    ]
+    for x in range(gray_image.width):
+        for y in range(gray_image.height):
+            gray_pixel = gray_image.getpixel((x, y))
+            r = min(int(gray_pixel * 1.07), 255)
+            g = min(int(gray_pixel * 0.74), 255)
+            b = min(int(gray_pixel * 0.43), 255)
+            sepia_image.putpixel((x, y), (r, g, b))
 
-    # Apply the transformation
-    sepia_array = np.dot(img_array, sepia_matrix).clip(0, 255).astype(np.uint8)
+    return sepia_image
 
-    # Convert back to PIL Image
-    return Image.fromarray(sepia_array)
+
+def apply_blur(image, radius=2):
+    """Apply Gaussian blur to image."""
+    return image.filter(ImageFilter.GaussianBlur(radius=radius))
+
+
+def apply_sharpen(image):
+    """Sharpen the image."""
+    return image.filter(ImageFilter.SHARPEN)
+
+
+def apply_contour(image):
+    """Apply contour filter to image."""
+    return image.filter(ImageFilter.CONTOUR)
+
+
+def apply_edge_enhance(image):
+    """Enhance edges in image."""
+    return image.filter(ImageFilter.EDGE_ENHANCE_MORE)
+
+
+def apply_brightness(image, factor=1.5):
+    """Adjust image brightness."""
+    enhancer = ImageEnhance.Brightness(image)
+    return enhancer.enhance(factor)
+
+
+def apply_contrast(image, factor=1.5):
+    """Adjust image contrast."""
+    enhancer = ImageEnhance.Contrast(image)
+    return enhancer.enhance(factor)
+
+
+def apply_invert(image):
+    """Invert image colors."""
+    return ImageOps.invert(image)
+
+
+def apply_solarize(image, threshold=128):
+    """Apply solarize effect."""
+    return ImageOps.solarize(image, threshold=threshold)
+
+
+def apply_emboss(image):
+    """Apply emboss filter to image."""
+    return image.filter(ImageFilter.EMBOSS)
+
+
+def apply_posterize(image, bits=2):
+    """Apply posterize effect."""
+    return ImageOps.posterize(image, bits)
+
+
+def apply_cartoon(image):
+    """Apply cartoon-like effect to image."""
+    # First apply edge detection - not directly used but affects the image
+    # Then apply color quantization
+    cartoon = image.quantize(colors=8).convert('RGB')
+    # Blend edges with quantized image
+    return ImageEnhance.Contrast(cartoon).enhance(1.5)
+
+
+def apply_vignette(image, level=0.3):
+    """Apply vignette effect to image."""
+    # Create a radial gradient mask
+    width, height = image.size
+    mask = Image.new('L', (width, height), 255)
+
+    # Draw circle with decreasing brightness from center
+    for y in range(height):
+        for x in range(width):
+            # Calculate distance from center (normalized)
+            distance = ((x - width / 2) ** 2 + (y - height / 2) ** 2) ** 0.5
+            distance = min(1.0, distance / (min(width, height) / 2))
+            # Set value based on distance
+            value = int(255 * (1 - distance * level))
+            mask.putpixel((x, y), value)
+
+    # Apply mask
+    result = image.copy()
+    result.putalpha(mask)
+    # Convert back to RGB
+    return result.convert('RGB')
+
+
+def apply_vintage(image):
+    """Apply vintage color effect."""
+    # Adjust color channels for a vintage look
+    r, g, b = image.split()
+    r = ImageEnhance.Contrast(r).enhance(1.1)
+    r = ImageEnhance.Brightness(r).enhance(1.1)
+    g = ImageEnhance.Contrast(g).enhance(0.9)
+    g = ImageEnhance.Brightness(g).enhance(0.9)
+    b = ImageEnhance.Contrast(b).enhance(0.9)
+    b = ImageEnhance.Brightness(b).enhance(0.8)
+    return Image.merge('RGB', (r, g, b))
+
+
+def apply_cool(image):
+    """Apply cool tone effect."""
+    # Enhance blue channel
+    r, g, b = image.split()
+    b = ImageEnhance.Brightness(b).enhance(1.2)
+    return Image.merge('RGB', (r, g, b))
+
+
+def apply_warm(image):
+    """Apply warm tone effect."""
+    # Enhance red and green channels
+    r, g, b = image.split()
+    r = ImageEnhance.Brightness(r).enhance(1.2)
+    g = ImageEnhance.Brightness(g).enhance(1.1)
+    return Image.merge('RGB', (r, g, b))

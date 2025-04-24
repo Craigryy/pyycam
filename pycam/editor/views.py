@@ -1,28 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from django.db import close_old_connections, connection
-from .models import ImageEdit
-from .forms import ImageEditForm
-from .effects import apply_effect
 import base64
 import io
-import json
 from PIL import Image
 import logging
 import time
+from .models import ImageEdit
+from .forms import ImageEditForm
+from .effects import apply_effect
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
 
 def login(request):
     """Simple login page that redirects authenticated users"""
     if request.user.is_authenticated:
         return redirect('home')
     return render(request, 'login.html')
+
 
 def homepage(request):
     """Homepage with editor and gallery - requires login"""
@@ -38,13 +38,18 @@ def homepage(request):
         'form': form,
     })
 
+
 @login_required
 @require_POST
 def apply_image_effect(request):
     """Apply image effects and return processed image preview"""
-    #Implement to debug to know if there is an error , reason is because we want to make sure the request is coming from the frontend
-    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':#this is a check to see if the request is an AJAX request,reason is because we want to make sure the request is coming from the frontend
-        return JsonResponse({'status': 'error', 'message': 'Invalid request'})#this is a response to the request if it is not an AJAX request
+    # Implement to debug to know if there is an error , reason is because we
+    # want to make sure the request is coming from the frontend
+    # this is a check to see if the request is an AJAX request,reason is
+    # because we want to make sure the request is coming from the frontend
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        # this is a response to the request if it is not an AJAX request
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 
     try:
         # Get request data
@@ -55,13 +60,16 @@ def apply_image_effect(request):
             return JsonResponse({'status': 'error', 'message': 'Missing effect or image data'})
 
         # Extract image data from base64
-        format, imgstr = image_data.split(';base64,')#note the image data is long and has a ;base64, at the end, so we need to split it
+        # note the image data is long and has a ;base64, at the end, so we need to split it
+        format, imgstr = image_data.split(';base64,')
         # Get the file extension
-        ext = format.split('/')[-1]#this is the file extention needed "e.g - jpg, png, etc."
+        ext = format.split('/')[-1]  # this is the file extention needed "e.g - jpg, png, etc."
         # Decode the image data
-        img_data = base64.b64decode(imgstr)#this is the image data in bytes
+        img_data = base64.b64decode(imgstr)  # this is the image data in bytes
         # Open the image
-        img = Image.open(io.BytesIO(img_data))#this is the image object, reason is python can manage the image data in bytes and manipulate it
+        # this is the image object, reason is python can manage the image data in
+        # bytes and manipulate it
+        img = Image.open(io.BytesIO(img_data))
 
         # Log basic info - helps me debug
         logger.info(f"Processing {effect_name} effect on {img.size} image")
@@ -86,17 +94,19 @@ def apply_image_effect(request):
         logger.error(f"Error applying effect: {str(e)}")
         return JsonResponse({'status': 'error', 'message': f'Error: {str(e)}'})
 
+
 @login_required
 @require_POST
 def save_image(request):
     """Save edited image to user's gallery - supports both form and AJAX methods"""
-    # Debug to know if there is an error , reason is because we want to make sure the request is coming from the frontend
+    # Debug to know if there is an error , reason is because we want to make
+    # sure the request is coming from the frontend
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
     logger.info(f"Save image request: {'AJAX' if is_ajax else 'form'}")
 
     try:
         # Handle regular form upload
-        if 'original_image' in request.FILES:#this is a check to see if the request has an original image
+        if 'original_image' in request.FILES:  # this is a check to see if the request has an original image
             form = ImageEditForm(request.POST, request.FILES)
             if form.is_valid():
                 # Create and save the image edit
@@ -107,9 +117,9 @@ def save_image(request):
 
                 # Process with effect if one was selected
                 if effect_applied and effect_applied != 'original':
-                    #get the original image
+                    # get the original image
                     original_img = Image.open(request.FILES['original_image'])
-                    #apply the effect
+                    # apply the effect
                     processed_img = apply_effect(original_img, effect_applied)
 
                     # Save both original and processed images
@@ -117,15 +127,17 @@ def save_image(request):
 
                     # Save processed image to edited_image field
                     img_data = io.BytesIO()
-                    #get the format of the image
-                    img_format = 'JPEG' if request.FILES['original_image'].name.lower().endswith('.jpg') else 'PNG'
-                    #save the image
+                    # get the format of the image
+                    img_format = 'JPEG' if request.FILES['original_image'].name.lower().endswith(
+                        '.jpg') else 'PNG'
+                    # save the image
                     processed_img.save(img_data, format=img_format)
 
                     timestamp = int(time.time())
-                    #get the filename
-                    filename = f"edited_{request.user.id}_{effect_applied}_{timestamp}.{img_format.lower()}"
-                    #save the image
+                    # get the filename
+                    filename = (f"edited_{request.user.id}_{effect_applied}_"
+                                f"{timestamp}.{img_format.lower()}")
+                    # save the image
                     image_edit.edited_image.save(filename, ContentFile(img_data.getvalue()))
                 else:
                     # No effect - just use original
@@ -170,7 +182,9 @@ def save_image(request):
 
             # Save both original and edited versions
             image_edit.original_image.save(f"original_{unique_id}.{ext}", ContentFile(img_data))
-            image_edit.edited_image.save(f"edited_{unique_id}_{effect}.{ext}", ContentFile(img_data))
+            image_edit.edited_image.save(
+                f"edited_{unique_id}_{effect}.{ext}",
+                ContentFile(img_data))
             image_edit.save()
 
             logger.info(f"AJAX image saved with ID: {image_edit.id}")
@@ -189,11 +203,13 @@ def save_image(request):
 
     return redirect('home')
 
+
 @login_required
 def delete_image(request, image_id):
     """Delete an image from the user's gallery"""
     # Check if this is an AJAX request - I put this here so it's easy to find
-    is_ajax = request.method == 'DELETE' and request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    is_ajax = request.method == 'DELETE' and request.headers.get(
+        'X-Requested-With') == 'XMLHttpRequest'
 
     try:
         # Get and delete the image
@@ -214,6 +230,7 @@ def delete_image(request, image_id):
 
     return redirect('home')
 
+
 @login_required
 def share_image(request, image_id):
     """Get a shareable link for the specified image"""
@@ -226,6 +243,7 @@ def share_image(request, image_id):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'success': True, 'url': share_url})
     return redirect(image.edited_image.url)
+
 
 def api_overview(request):
     """API documentation endpoint - lists available API endpoints"""

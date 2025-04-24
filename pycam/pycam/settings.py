@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import dj_database_url
 import os
 from pathlib import Path
 
@@ -35,10 +36,14 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-change-this-in-produc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'localhost:8001', 'localhost:8090', '127.0.0.1','*']
+ALLOWED_HOSTS = ['localhost', 'localhost:8001', 'localhost:8090', '127.0.0.1', '*']
 
 # CSRF settings
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8090', 'http://127.0.0.1:8090', 'http://localhost:8080', 'http://pycam.docker.localhost']
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8090',
+    'http://127.0.0.1:8090',
+    'http://localhost:8080',
+    'http://pycam.docker.localhost']
 
 # Application definition
 
@@ -103,7 +108,6 @@ WSGI_APPLICATION = 'pycam.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # Use dj-database-url for simpler database configuration
-import dj_database_url
 
 # Check if we're running on Render
 IS_RENDER = 'RENDER' in os.environ

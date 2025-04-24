@@ -1,11 +1,11 @@
 """
 Production settings for Django deployment on Render.com
 """
+from .settings import *  # Import base settings
 import os
 # Set RENDER environment variable to ensure database configuration works correctly
 os.environ['RENDER'] = 'True'
 
-from .settings import *  # Import base settings
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # Keep debug on until we resolve issues
@@ -81,7 +81,8 @@ SITE_NAME = 'PyyCam'
 SOCIALACCOUNT_ENABLED = True
 
 # Only use Cloudinary if credentials are available
-if os.environ.get('CLOUDINARY_CLOUD_NAME') and os.environ.get('CLOUDINARY_API_KEY') and os.environ.get('CLOUDINARY_API_SECRET'):
+if os.environ.get('CLOUDINARY_CLOUD_NAME') and os.environ.get(
+        'CLOUDINARY_API_KEY') and os.environ.get('CLOUDINARY_API_SECRET'):
     # Use cloudinary for storing static and media files
     INSTALLED_APPS += ['cloudinary_storage', 'cloudinary']
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'

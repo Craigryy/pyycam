@@ -1,6 +1,7 @@
 from django import forms
 from .models import ImageEdit
 
+
 class ImageEditForm(forms.ModelForm):
     """Form for uploading and editing images"""
 

@@ -5,6 +5,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Command(BaseCommand):
     help = 'Check database connection health and restart if needed'
 
@@ -26,7 +27,8 @@ class Command(BaseCommand):
         interval = options['interval']
         timeout = options['timeout']
         start_time = time.time()
-        self.stdout.write(self.style.SUCCESS(f'Starting database health check (interval={interval}s)'))
+        self.stdout.write(self.style.SUCCESS(
+            f'Starting database health check (interval={interval}s)'))
 
         try:
             while True:
@@ -39,10 +41,13 @@ class Command(BaseCommand):
                         cursor.execute("SELECT 1")
                         cursor.fetchone()
 
-                    self.stdout.write(self.style.SUCCESS(f'[{time.strftime("%H:%M:%S")}] Database connection OK'))
+                    self.stdout.write(
+                        self.style.SUCCESS(f'[{time.strftime("%H:%M:%S")}] Database connection OK'))
                 except Exception as e:
-                    self.stdout.write(self.style.ERROR(f'[{time.strftime("%H:%M:%S")}] Database error: {str(e)}'))
-                    self.stdout.write(self.style.WARNING('Attempting to close and reestablish all connections...'))
+                    self.stdout.write(
+                        self.style.ERROR(f'[{time.strftime("%H:%M:%S")}] Database error: {str(e)}'))
+                    self.stdout.write(
+                        self.style.WARNING('Attempting to close and reestablish all connections...'))
 
                     try:
                         # More aggressive connection reset
@@ -53,9 +58,11 @@ class Command(BaseCommand):
                         # Force new connection
                         connection.ensure_connection()
 
-                        self.stdout.write(self.style.SUCCESS('Connection reestablished successfully'))
+                        self.stdout.write(
+                            self.style.SUCCESS('Connection reestablished successfully'))
                     except Exception as reconnect_error:
-                        self.stdout.write(self.style.ERROR(f'Failed to reconnect: {str(reconnect_error)}'))
+                        self.stdout.write(
+                            self.style.ERROR(f'Failed to reconnect: {str(reconnect_error)}'))
 
                 # Check if we should exit based on timeout
                 if timeout > 0 and (time.time() - start_time) > timeout:

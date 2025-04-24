@@ -2,12 +2,14 @@ from django.db import models
 from django.contrib.auth.models import User
 import os
 
+
 def get_image_upload_path(instance, filename):
     """
     Define a custom upload path for images.
     Images will be organized by user ID to keep them separate.
     """
     return os.path.join('user_uploads', f'user_{instance.user.id}', filename)
+
 
 class Image(models.Model):
     """
@@ -35,6 +37,7 @@ class Image(models.Model):
 
         # Call the parent class's delete method
         super().delete(*args, **kwargs)
+
 
 class ImageEdit(models.Model):
     """

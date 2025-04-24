@@ -136,29 +136,42 @@ init-deploy-fmt:
 
 plan-setup:
 	cd infra && sudo docker compose run --rm \
-  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+  -e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
   terraform -chdir=setup plan
 
 plan-deploy:
 	cd infra && sudo docker compose run --rm \
-  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+  -e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
   terraform -chdir=deploy plan
 
-validate-setup:
+setup-validate:
 	cd infra && sudo docker compose run --rm \
-  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+  -e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
   terraform -chdir=setup validate
 
 validate-deploy:
 	cd infra && sudo docker compose run --rm \
-  -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-  -e AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN \
+  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+  -e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
   terraform -chdir=deploy validate
 
+setup-apply:
+	cd infra && sudo docker compose run --rm \
+	  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+	  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+	  -e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
+	  terraform -chdir=setup apply
+
+deploy-apply:
+	cd infra && sudo docker compose run --rm \
+  -e AWS_ACCESS_KEY_ID=$(AWS_ACCESS_KEY_ID) \
+  -e AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+  -e AWS_SESSION_TOKEN=$(AWS_SESSION_TOKEN) \
+  terraform -chdir=deploy apply
